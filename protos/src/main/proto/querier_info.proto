@@ -1,0 +1,8 @@
+package cn.edu.scut.kapok.distributed.protos;
+
+option java_outer_classname = "QuerierInfoProto";
+
+message QuerierInfo {
+    required string addr = 1;
+    optional string hostname = 2;
+}

@@ -1,0 +1,31 @@
+allprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        runtime files("${rootProject.projectDir}/conf")
+        compile 'com.google.code.gson:gson:2.3.1'
+    }
+}
+
+subprojects {
+    version = '1.0'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    jar.baseName = "${rootProject.name}-${project.name}"
+}
+
+dependencies {
+    compile project(':api')
+}
+
+task copyJars(type: Copy, dependsOn: subprojects.jar) {
+    from(subprojects.jar)
+    into project.file('dist')
+}
+
+jar.dependsOn copyJars

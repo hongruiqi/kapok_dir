@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+    <appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.EnhancedPatternLayout">
+            <param name="ConversionPattern"
+                   value="%d %p %m [%c{1.}:%L]%n"/>
+        </layout>
+    </appender>
+    <logger name="org.apache.zookeeper">
+        <level value="warn"/>
+    </logger>
+    <logger name="org.eclipse.jetty">
+        <level value="error"/>
+    </logger>
+    <logger name="org.apache.curator">
+        <level value="warn"/>
+    </logger>
+    <root>
+        <level value="debug"/>
+        <appender-ref ref="stdout"/>
+    </root>
+</log4j:configuration>
