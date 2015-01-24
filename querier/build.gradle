@@ -1,6 +1,7 @@
 dependencies {
     compile 'org.apache.zookeeper:zookeeper:3.4.6'
     compile 'org.eclipse.jetty:jetty-server:9.2.6.v20141205'
+    compile 'org.eclipse.jetty:jetty-client:9.2.6.v20141205'
     compile project(':common')
     compile project(':protos')
 }

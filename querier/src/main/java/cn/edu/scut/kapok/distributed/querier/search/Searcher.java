@@ -2,7 +2,8 @@ package cn.edu.scut.kapok.distributed.querier.search;
 
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
+import com.google.common.util.concurrent.ListenableFuture;
 
 public interface Searcher {
-    SearchResponse search(SearchRequest request) throws Exception;
+    ListenableFuture<SearchResponse> search(SearchRequest request) throws SearchException;
 }

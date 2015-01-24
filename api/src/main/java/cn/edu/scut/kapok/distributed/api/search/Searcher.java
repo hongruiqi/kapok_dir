@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.api.search;
 
-import cn.edu.scut.kapok.distributed.api.search.exceptions.QuerierNotFoundException;
-import cn.edu.scut.kapok.distributed.api.search.exceptions.SearchException;
+import cn.edu.scut.kapok.distributed.api.search.exception.QuerierNotFoundException;
+import cn.edu.scut.kapok.distributed.api.search.exception.SearchException;
 import cn.edu.scut.kapok.distributed.api.search.querier.provider.QuerierProvider;
 import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;

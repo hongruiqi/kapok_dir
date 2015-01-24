@@ -1,7 +1,6 @@
 package cn.edu.scut.kapok.distributed.querier.server;
 
 import cn.edu.scut.kapok.distributed.querier.search.KapokSearcher;
-import cn.edu.scut.kapok.distributed.querier.search.resource.selector.DefaultResourceSelector;
 import cn.edu.scut.kapok.distributed.querier.server.handler.SearchHandler;
 import org.apache.curator.framework.CuratorFramework;
 import org.eclipse.jetty.server.Server;
@@ -38,7 +37,6 @@ public class QuerierServer {
         // Search Handler
         KapokSearcher searcher = new KapokSearcher.Builder()
                 .setCuratorFramework(cf)
-                .setResourceSelector(new DefaultResourceSelector())
                 .build();
         searcher.start();
         searchContext.setHandler(new SearchHandler(searcher));

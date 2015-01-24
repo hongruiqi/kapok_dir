@@ -43,7 +43,7 @@ public class SearchHandler extends AbstractHandler {
 
         SearchResponse searchResp;
         try {
-            searchResp = searcher.search(searchReq);
+            searchResp = searcher.search(searchReq).get();
         } catch (Exception e) {
             throw new IOException(e);
         }
