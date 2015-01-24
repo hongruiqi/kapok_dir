@@ -60,6 +60,7 @@ public class SearchHandler extends AbstractHandler {
                 } catch (IOException e) {
                     logger.warn("send search exception", e);
                 }
+                baseRequest.setHandled(true);
             }
         });
     }

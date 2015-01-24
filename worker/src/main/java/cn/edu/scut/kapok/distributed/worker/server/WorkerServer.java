@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.worker.server;
 
 import cn.edu.scut.kapok.distributed.worker.fetch.Fetcher;
-import cn.edu.scut.kapok.distributed.worker.fetch.SampleFetcher;
+import cn.edu.scut.kapok.distributed.worker.fetch.DemoFetcher;
 import cn.edu.scut.kapok.distributed.worker.server.handler.SearchHandler;
 import org.apache.curator.framework.CuratorFramework;
 import org.eclipse.jetty.server.Server;
@@ -34,7 +34,7 @@ public class WorkerServer {
 
     private void registerHandlers(Server server) throws Exception {
         ContextHandler searchContext = new ContextHandler("/search");
-        Fetcher fetcher = new SampleFetcher();
+        Fetcher fetcher = new DemoFetcher();
         searchContext.setHandler(new SearchHandler(fetcher));
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
