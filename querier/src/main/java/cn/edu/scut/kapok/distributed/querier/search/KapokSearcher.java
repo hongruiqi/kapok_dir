@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.*;
 public class KapokSearcher implements Searcher {
 
     private static final Logger logger = LoggerFactory.getLogger(KapokSearcher.class);
+
     private final CuratorFramework cf;
     private final Fetcher fetcher;
     private final Selector selector;
@@ -67,16 +68,18 @@ public class KapokSearcher implements Searcher {
         return state.get() == State.STARTED;
     }
 
-    public ListenableFuture<SearchResponse> search(SearchRequest request) throws SearchException {
+    public ListenableFuture<SearchResponse> search(SearchRequest request) {
         checkState(!isActive(), "KapokSearcher must be started before calling this method");
 
+        final SettableFuture<SearchResponse> future = SettableFuture.create();
 
         List<WorkerInfo> candidateWorkers = resourcesToWorkerInfo(request.getResourcesList());
         final List<WorkerInfo> workers;
         try {
             workers = selector.selectResource(request.getQuery(), candidateWorkers);
         } catch (SelectException e) {
-            throw new SearchException(e);
+            future.setException(new SearchException(e));
+            return future;
         }
 
         QueryRequest queryRequest = QueryRequest.newBuilder()
@@ -90,11 +93,10 @@ public class KapokSearcher implements Searcher {
             futures.add(fetcher.fetch(worker, queryRequest));
         }
 
-        final SettableFuture<SearchResponse> future = SettableFuture.create();
         Futures.addCallback(Futures.successfulAsList(futures), new FutureCallback<List<QueryResponse>>() {
             @Override
             public void onSuccess(List<QueryResponse> result) {
-                List<WorkerAndQueryResponse> results = new ArrayList<WorkerAndQueryResponse>();
+                List<WorkerAndQueryResponse> results = new ArrayList<>();
                 for (int i = 0; i < result.size(); i++) {
                     results.add(new WorkerAndQueryResponse(workers.get(i), Optional.of(result.get(i))));
                 }

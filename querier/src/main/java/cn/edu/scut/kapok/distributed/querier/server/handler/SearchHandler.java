@@ -3,7 +3,8 @@ package cn.edu.scut.kapok.distributed.querier.server.handler;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
 import cn.edu.scut.kapok.distributed.querier.search.Searcher;
-import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.slf4j.Logger;
@@ -19,14 +20,14 @@ import java.io.OutputStream;
 public class SearchHandler extends AbstractHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchHandler.class);
-    private Searcher searcher;
+    private final Searcher searcher;
 
     public SearchHandler(Searcher searcher) {
         this.searcher = searcher;
     }
 
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void handle(String target, final Request baseRequest, HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
         logger.info(request.getMethod());
         if (!request.getMethod().equals("POST")) {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -41,19 +42,25 @@ public class SearchHandler extends AbstractHandler {
             throw e;
         }
 
-        SearchResponse searchResp;
-        try {
-            searchResp = searcher.search(searchReq).get();
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
-        Preconditions.checkNotNull(searchResp);
-        try (OutputStream out = response.getOutputStream()) {
-            searchResp.writeTo(out);
-        } catch (IOException e) {
-            logger.error("generate SearchResponse", e);
-            throw e;
-        }
-        baseRequest.setHandled(true);
+        Futures.addCallback(searcher.search(searchReq), new FutureCallback<SearchResponse>() {
+            @Override
+            public void onSuccess(SearchResponse result) {
+                try (OutputStream out = response.getOutputStream()) {
+                    result.writeTo(out);
+                } catch (IOException e) {
+                    logger.warn("send search response", e);
+                }
+                baseRequest.setHandled(true);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                try {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                } catch (IOException e) {
+                    logger.warn("send search exception", e);
+                }
+            }
+        });
     }
 }

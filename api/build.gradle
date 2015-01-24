@@ -1,8 +1,8 @@
 dependencies {
-    compile 'org.apache.zookeeper:zookeeper:3.4.6'
-    compile 'com.google.guava:guava:18.0'
     compile 'org.eclipse.jetty:jetty-client:9.2.6.v20141205'
+    compile 'org.apache.curator:curator-recipes:2.7.0'
     compile 'com.google.protobuf:protobuf-java:2.6.1'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile project(':common')
     compile project(':protos')
 }
