@@ -9,6 +9,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,7 @@ public class WorkerManager {
     private final NodeManager<WorkerInfo> nodeManager;
     private ConcurrentHashMap<String, WorkerInfo> workers = new ConcurrentHashMap<>();
 
+    @Inject
     public WorkerManager(CuratorFramework cf) {
         nodeManager = new NodeManager<>(ZKPath.WORKERS, new ProtoParser<WorkerInfo>() {
             @Override

@@ -11,7 +11,7 @@
         <level value="warn"/>
     </logger>
     <logger name="org.eclipse.jetty">
-        <level value="error"/>
+        <level value="warn"/>
     </logger>
     <logger name="org.apache.curator">
         <level value="warn"/>

@@ -1,3 +1,5 @@
+apply plugin: 'idea'
+
 allprojects {
     apply plugin: 'java'
 
@@ -24,7 +26,7 @@ dependencies {
 }
 
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
-    from(subprojects.jar)
+    from('subprojects.jar')
     into project.file('dist')
 }
 

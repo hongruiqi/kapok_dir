@@ -1,6 +1,10 @@
 dependencies {
     compile 'org.apache.zookeeper:zookeeper:3.4.6'
     compile 'org.eclipse.jetty:jetty-server:9.2.6.v20141205'
+    compile 'org.eclipse.jetty:jetty-servlets:9.2.6.v20141205'
+    compile 'org.eclipse.jetty:jetty-servlet:9.2.6.v20141205'
+    compile 'com.google.inject:guice:3.0'
+    compile 'com.google.inject.extensions:guice-servlet:3.0'
     compile project(':common')
     compile project(':protos')
 }
