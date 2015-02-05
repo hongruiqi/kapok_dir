@@ -1,12 +1,17 @@
 package cn.edu.scut.kapok.distributed.api.search.querier.provider;
 
-import cn.edu.scut.kapok.distributed.api.search.exceptions.QuerierNotFoundException;
+import cn.edu.scut.kapok.distributed.api.search.exception.QuerierNotFoundException;
 import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class SingleQuerierProvider implements QuerierProvider {
 
-    private QuerierInfo querierInfo;
+    private final QuerierInfo querierInfo;
 
+    @Inject
     public SingleQuerierProvider(QuerierInfo querierInfo) {
         this.querierInfo = querierInfo;
     }

@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.api.search;
 
-import cn.edu.scut.kapok.distributed.api.search.exceptions.QuerierNotFoundException;
-import cn.edu.scut.kapok.distributed.api.search.exceptions.SearchException;
+import cn.edu.scut.kapok.distributed.api.search.exception.QuerierNotFoundException;
+import cn.edu.scut.kapok.distributed.api.search.exception.SearchException;
 import cn.edu.scut.kapok.distributed.api.search.querier.provider.QuerierProvider;
 import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
@@ -22,6 +22,8 @@ import org.eclipse.jetty.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -30,6 +32,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Singleton
 public class Searcher {
 
     private static final Logger logger = LoggerFactory.getLogger(Searcher.class);
@@ -37,6 +40,7 @@ public class Searcher {
     private QuerierProvider querierProvider;
     private HttpClient httpClient;
 
+    @Inject
     public Searcher(HttpClient httpClient, QuerierProvider querierProvider) {
         this.httpClient = checkNotNull(httpClient);
         this.querierProvider = checkNotNull(querierProvider);

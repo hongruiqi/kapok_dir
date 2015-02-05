@@ -6,7 +6,7 @@ import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
-import cn.edu.scut.kapok.distributed.querier.fetch.Fetcher;
+import cn.edu.scut.kapok.distributed.querier.search.fetch.Fetcher;
 import cn.edu.scut.kapok.distributed.querier.search.resource.merger.MergeException;
 import cn.edu.scut.kapok.distributed.querier.search.resource.merger.Merger;
 import cn.edu.scut.kapok.distributed.querier.search.resource.selector.SelectException;

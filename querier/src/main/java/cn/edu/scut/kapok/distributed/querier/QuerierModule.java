@@ -1,9 +1,9 @@
 package cn.edu.scut.kapok.distributed.querier;
 
-import cn.edu.scut.kapok.distributed.querier.fetch.Fetcher;
-import cn.edu.scut.kapok.distributed.querier.fetch.SimpleFetcher;
 import cn.edu.scut.kapok.distributed.querier.search.KapokSearcher;
 import cn.edu.scut.kapok.distributed.querier.search.Searcher;
+import cn.edu.scut.kapok.distributed.querier.search.fetch.Fetcher;
+import cn.edu.scut.kapok.distributed.querier.search.fetch.SimpleFetcher;
 import cn.edu.scut.kapok.distributed.querier.search.resource.merger.Merger;
 import cn.edu.scut.kapok.distributed.querier.search.resource.merger.SimpleMerger;
 import cn.edu.scut.kapok.distributed.querier.search.resource.selector.Selector;

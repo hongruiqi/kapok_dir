@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.fetch;
+package cn.edu.scut.kapok.distributed.querier.search.fetch;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;

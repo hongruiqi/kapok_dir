@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.fetch;
+package cn.edu.scut.kapok.distributed.querier.search.fetch;
 
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
 import com.google.common.io.Closeables;
