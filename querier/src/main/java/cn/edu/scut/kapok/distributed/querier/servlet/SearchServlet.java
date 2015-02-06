@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.servlets;
+package cn.edu.scut.kapok.distributed.querier.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
@@ -62,8 +62,9 @@ public class SearchServlet extends HttpServlet {
                 } catch (IOException e) {
                     logger.error("serialize and write SearchResponse", e);
                     // ignored intended.
+                } finally {
+                    asyncContext.complete();
                 }
-                asyncContext.complete();
             }
 
             @Override

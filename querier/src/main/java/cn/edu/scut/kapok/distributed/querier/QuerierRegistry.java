@@ -42,7 +42,7 @@ public class QuerierRegistry {
     }
 
     // Start the registry service.
-    // The service creates a node in ZooKeeper the querier, and maintains its state.
+    // The service creates a node in ZooKeeper for the querier, and maintains its state.
     // The node stores the information about the querier.
     public void start() {
         // Build protobuf message.

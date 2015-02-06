@@ -10,11 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 // QuerierManager manages the status of the queriers.
 // start() should be called to make the manager working.
+@Singleton
 public class QuerierManager {
 
     private static final Logger logger = LoggerFactory.getLogger(QuerierManager.class);

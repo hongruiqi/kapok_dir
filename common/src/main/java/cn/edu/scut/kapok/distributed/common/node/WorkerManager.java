@@ -10,11 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 // WorkerManager manages the status of the workers.
 // start() should be called to make the manager working.
+@Singleton
 public class WorkerManager {
     private static final Logger logger = LoggerFactory.getLogger(WorkerManager.class);
 

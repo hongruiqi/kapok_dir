@@ -2,7 +2,7 @@ package cn.edu.scut.kapok.distributed.querier;
 
 import cn.edu.scut.kapok.distributed.common.CommonModule;
 import cn.edu.scut.kapok.distributed.common.node.WorkerManager;
-import cn.edu.scut.kapok.distributed.querier.servlets.ServletsConfigModule;
+import cn.edu.scut.kapok.distributed.querier.servlet.ServletsConfigModule;
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import org.apache.curator.framework.CuratorFramework;

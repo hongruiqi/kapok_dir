@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.servlets;
+package cn.edu.scut.kapok.distributed.querier.servlet;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;

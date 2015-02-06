@@ -1,8 +1,8 @@
-package cn.edu.scut.kapok.distributed.querier.servlets;
+package cn.edu.scut.kapok.distributed.querier.servlet;
 
 import com.google.inject.servlet.ServletModule;
 
-// ServletsConfigModule binds servlet paths with servlets.
+// ServletsConfigModule binds servlet paths with servlet.
 public class ServletsConfigModule extends ServletModule {
     @Override
     protected void configureServlets() {
