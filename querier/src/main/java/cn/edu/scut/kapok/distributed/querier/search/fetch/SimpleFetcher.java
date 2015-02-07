@@ -1,11 +1,10 @@
 package cn.edu.scut.kapok.distributed.querier.search.fetch;
 
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
-import com.google.common.io.Closeables;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.zookeeper.server.ByteBufferInputStream;
+import com.google.protobuf.CodedInputStream;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -17,7 +16,6 @@ import org.eclipse.jetty.util.URIUtil;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
@@ -51,14 +49,12 @@ public class SimpleFetcher implements Fetcher {
                     // exception set in onComplete.
                     return;
                 }
-                InputStream in = new ByteBufferInputStream(content);
                 try {
-                    QueryResponse searchResponse = QueryResponse.parseFrom(in);
+                    QueryResponse searchResponse = QueryResponse.parseFrom(
+                            CodedInputStream.newInstance(content));
                     future.set(searchResponse);
                 } catch (IOException e) {
                     future.setException(e);
-                } finally {
-                    Closeables.closeQuietly(in);
                 }
             }
         }).send(new Response.CompleteListener() {

@@ -7,11 +7,10 @@ import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import com.google.common.io.Closeables;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.zookeeper.server.ByteBufferInputStream;
+import com.google.protobuf.CodedInputStream;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -81,15 +79,13 @@ public class Searcher {
                     // exception set in onComplete.
                     return;
                 }
-                InputStream in = new ByteBufferInputStream(content);
                 try {
-                    SearchResponse searchResponse = SearchResponse.parseFrom(in);
+                    SearchResponse searchResponse = SearchResponse.parseFrom(
+                            CodedInputStream.newInstance(content));
                     future.set(searchResponse);
                 } catch (IOException e) {
                     logger.error("parse search response", e);
                     future.setException(e);
-                } finally {
-                    Closeables.closeQuietly(in);
                 }
             }
         }).send(new Response.CompleteListener() {
