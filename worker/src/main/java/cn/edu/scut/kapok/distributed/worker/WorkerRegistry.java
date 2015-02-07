@@ -20,13 +20,21 @@ public class WorkerRegistry {
     private static final Logger logger = LoggerFactory.getLogger(WorkerRegistry.class);
 
     private final CuratorFramework cf;
+    private final String workerName;
+    private final String workerUUID;
     private final String workerAddr;
     private PersistentEphemeralNode node;
 
     @Inject
-    public WorkerRegistry(@Named("worker.Addr") String workerAddr, CuratorFramework cf) {
-        this.cf = checkNotNull(cf);
+    public WorkerRegistry(
+            @Named("worker.Name") String workerName,
+            @Named("worker.UUID") String workerUUID,
+            @Named("worker.Addr") String workerAddr,
+            CuratorFramework cf) {
+        this.workerName = checkNotNull(workerName);
+        this.workerUUID = checkNotNull(workerUUID);
         this.workerAddr = checkNotNull(workerAddr);
+        this.cf = checkNotNull(cf);
     }
 
     // Return the workerAddr provided.
@@ -39,10 +47,9 @@ public class WorkerRegistry {
     // The node stores the information about the worker.
     public void start() {
         // Build protobuf message.
-        WorkerInfo.Builder builder = WorkerInfo.newBuilder();
-        builder.setAddr(workerAddr);
-
-        final WorkerInfo info = builder.build();
+        final WorkerInfo info = WorkerInfo.newBuilder().setName(workerName)
+                .setUuid(workerUUID)
+                .setAddr(workerAddr).build();
 
         // Create the worker node, and start event loop.
         node = new PersistentEphemeralNode(cf,

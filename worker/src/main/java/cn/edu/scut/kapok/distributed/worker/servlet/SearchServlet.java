@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.worker.server.servlet;
+package cn.edu.scut.kapok.distributed.worker.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
