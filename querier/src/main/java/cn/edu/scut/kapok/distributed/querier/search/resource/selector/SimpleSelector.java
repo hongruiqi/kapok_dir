@@ -2,6 +2,8 @@ package cn.edu.scut.kapok.distributed.querier.search.resource.selector;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto;
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
+import cn.edu.scut.kapok.distributed.querier.spi.search.resource.selector.SelectException;
+import cn.edu.scut.kapok.distributed.querier.spi.search.resource.selector.Selector;
 import com.google.common.collect.ImmutableList;
 
 import javax.inject.Singleton;

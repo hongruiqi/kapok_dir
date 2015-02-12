@@ -2,7 +2,7 @@ package cn.edu.scut.kapok.distributed.worker.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
-import cn.edu.scut.kapok.distributed.worker.fetch.Fetcher;
+import cn.edu.scut.kapok.distributed.worker.spi.Retriever;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -25,11 +25,11 @@ public class SearchServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchServlet.class);
 
-    private final Fetcher fetcher;
+    private final Retriever retriever;
 
     @Inject
-    public SearchServlet(Fetcher fetcher) {
-        this.fetcher = fetcher;
+    public SearchServlet(Retriever retriever) {
+        this.retriever = retriever;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SearchServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        ListenableFuture<QueryResponse> future = fetcher.fetch(queryRequest);
+        ListenableFuture<QueryResponse> future = retriever.retrieve(queryRequest);
         Futures.addCallback(future, new FutureCallback<QueryResponse>() {
             @Override
             public void onSuccess(QueryResponse result) {

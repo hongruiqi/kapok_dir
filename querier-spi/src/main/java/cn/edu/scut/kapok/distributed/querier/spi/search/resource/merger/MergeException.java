@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.search.resource.merger;
+package cn.edu.scut.kapok.distributed.querier.spi.search.resource.merger;
 
 public class MergeException extends Exception {
     public MergeException() {

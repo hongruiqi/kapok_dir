@@ -5,6 +5,7 @@ import cn.edu.scut.kapok.distributed.common.node.WorkerManager;
 import cn.edu.scut.kapok.distributed.querier.servlet.ServletsConfigModule;
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import groovy.lang.GroovyClassLoader;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,12 +112,17 @@ public final class QuerierMain {
         }
     }
 
-    public static void main(String[] args) {
+    private static Module loadConfigModule() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        GroovyClassLoader loader = new GroovyClassLoader();
+        return (Module)loader.loadClass("QuerierModule").newInstance();
+    }
+
+    public static void main(String[] args) throws Exception {
         // create injector.
         Injector injector = Guice.createInjector(
                 Stage.PRODUCTION,
                 new CommonModule(),
-                new QuerierModule(),
+                loadConfigModule(),
                 new ServletsConfigModule());
 
         // init components.

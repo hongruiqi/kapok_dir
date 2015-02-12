@@ -57,7 +57,7 @@ public class WorkerRegistry {
                 ZKPath.WORKERS + "/instance-",
                 info.toByteArray());
         node.start();
-        logger.info("create worker node: {}", info.toString().replace("\n", " "));
+        logger.info("worker node: {}", info.toString().replace("\n", " "));
     }
 
     // Close the node in ZooKeeper.

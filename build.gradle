@@ -8,10 +8,10 @@ allprojects {
     }
 
     dependencies {
-        runtime files("${rootProject.projectDir}/conf")
+        compile 'org.codehaus.groovy:groovy-all:2.4.+'
         compile 'com.google.code.findbugs:jsr305:3.0.0'
         compile 'com.google.guava:guava:18.0'
-        compile 'org.slf4j:slf4j-log4j12:1.7.10'
+        compile 'org.slf4j:slf4j-log4j12:1.7.+'
     }
 }
 
@@ -20,16 +20,7 @@ subprojects {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 
+    project.buildDir = rootProject.buildDir
+
     jar.baseName = "${rootProject.name}-${project.name}"
 }
-
-dependencies {
-    compile project(':api')
-}
-
-task copyJars(type: Copy, dependsOn: subprojects.jar) {
-    from(subprojects.jar)
-    into project.file('dist')
-}
-
-jar.dependsOn copyJars

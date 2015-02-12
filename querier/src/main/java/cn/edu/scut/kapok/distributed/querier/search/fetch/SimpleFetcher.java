@@ -1,6 +1,8 @@
 package cn.edu.scut.kapok.distributed.querier.search.fetch;
 
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
+import cn.edu.scut.kapok.distributed.querier.spi.search.fetch.FetchException;
+import cn.edu.scut.kapok.distributed.querier.spi.search.fetch.Fetcher;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;

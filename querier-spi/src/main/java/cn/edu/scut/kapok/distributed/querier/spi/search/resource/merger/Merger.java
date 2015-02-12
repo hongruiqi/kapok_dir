@@ -1,7 +1,7 @@
-package cn.edu.scut.kapok.distributed.querier.search.resource.merger;
+package cn.edu.scut.kapok.distributed.querier.spi.search.resource.merger;
 
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import cn.edu.scut.kapok.distributed.querier.search.WorkerAndQueryResponse;
+import cn.edu.scut.kapok.distributed.querier.spi.search.WorkerAndQueryResponse;
 
 import java.util.List;
 

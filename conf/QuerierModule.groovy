@@ -1,0 +1,1 @@
+../querier/src/main/groovy/QuerierModule.groovy

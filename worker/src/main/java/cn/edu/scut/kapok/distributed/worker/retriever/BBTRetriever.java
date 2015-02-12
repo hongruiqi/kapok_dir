@@ -1,10 +1,12 @@
-package cn.edu.scut.kapok.distributed.worker.fetch;
+package cn.edu.scut.kapok.distributed.worker.retriever;
 
 import cn.edu.scut.kapok.distributed.common.util.ByteBufferInputStream;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResult;
+import cn.edu.scut.kapok.distributed.worker.spi.RetrieveException;
+import cn.edu.scut.kapok.distributed.worker.spi.Retriever;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -24,26 +26,25 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static cn.edu.scut.kapok.distributed.protos.QueryProto.Query.Type;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Singleton
-public class BBTFetcher implements Fetcher {
+public class BBTRetriever implements Retriever {
 
     private final HttpClient client;
 
     @Inject
-    public BBTFetcher(HttpClient client) {
+    public BBTRetriever(HttpClient client) {
         this.client = client;
     }
 
     private List<String> extractWords(Query query) {
         // Skip not condition.
         if (query.hasNot() && query.getNot()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         if (query.getType() == Type.WORD) {
             return Lists.newArrayList(query.getWordQuery().getWord());
@@ -55,7 +56,7 @@ public class BBTFetcher implements Fetcher {
             return words;
         } else {
             // Unknown query type.
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -66,9 +67,7 @@ public class BBTFetcher implements Fetcher {
         String introT = doc.select("div.searchintro p strong").text();
         int total = Integer.valueOf(introT.split("//s+")[1]);
         results.setTotal(total);
-        Iterator<Element> iterator = doc.select(".news_msg").iterator();
-        while (iterator.hasNext()) {
-            Element elem = iterator.next();
+        for (Element elem: doc.select(".news_msg")) {
             Element titleA = elem.select("h4 a").first();
             String url = titleA.absUrl("href");
             String title = titleA.text();
@@ -87,7 +86,7 @@ public class BBTFetcher implements Fetcher {
     }
 
     @Override
-    public ListenableFuture<QueryResponse> fetch(QueryRequest request) {
+    public ListenableFuture<QueryResponse> retrieve(QueryRequest request) {
         checkNotNull(request);
 
         final SettableFuture<QueryResponse> future = SettableFuture.create();
@@ -133,7 +132,7 @@ public class BBTFetcher implements Fetcher {
                     future.setException(result.getFailure());
                 }
                 if (result.getResponse().getStatus() != HttpStatus.OK_200) {
-                    future.setException(new FetchException("baidu response code error"));
+                    future.setException(new RetrieveException("baidu response code error"));
                 }
             }
         });

@@ -5,7 +5,10 @@ import cn.edu.scut.kapok.distributed.worker.server.WorkerServer;
 import cn.edu.scut.kapok.distributed.worker.servlet.ServletsConfigModule;
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import groovy.lang.GroovyClassLoader;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.state.ConnectionState;
+import org.apache.curator.framework.state.ConnectionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +42,12 @@ public class WorkerMain {
         checkState(Scopes.isSingleton(injector.getBinding(CuratorFramework.class)),
                 "CuratorFramework must be bound as singleton.");
         final CuratorFramework cf = injector.getInstance(CuratorFramework.class);
+        cf.getConnectionStateListenable().addListener(new ConnectionStateListener() {
+            @Override
+            public void stateChanged(CuratorFramework client, ConnectionState newState) {
+                logger.info("ZooKeeper state change: {}", newState);
+            }
+        });
         cf.start();
         shutdownHooks.push(new Runnable() {
             @Override
@@ -85,12 +94,17 @@ public class WorkerMain {
         }
     }
 
-    public static void main(String[] args) {
+    private static Module loadConfigModule() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        GroovyClassLoader loader = new GroovyClassLoader();
+        return (Module)loader.loadClass("WorkerModule").newInstance();
+    }
+
+    public static void main(String[] args) throws Exception {
         // create injector.
         Injector injector = Guice.createInjector(
                 Stage.PRODUCTION,
                 new CommonModule(),
-                new WorkerModule(),
+                loadConfigModule(),
                 new ServletsConfigModule());
 
         // init components.
