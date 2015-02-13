@@ -2,7 +2,7 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.+'
 }
 
-task compileProto(type:Exec) {
+task compileProto(type: Exec) {
     group 'ProtoBuf'
     description 'Compile protobuf to java sources.'
 
@@ -13,12 +13,14 @@ task compileProto(type:Exec) {
     }
     inputs.files 'src/main/proto'
     outputs.dir outputDir
+
+    mkdir outputDir
     commandLine('protoc', '-I', protoDir, *protoFiles, '--java_out', outputDir)
 }
 
 compileJava.dependsOn compileProto
 
-task cleanProto(type:Delete) {
+task cleanProto(type: Delete) {
     group 'ProtoBuf'
     description 'Clean generated java sources.'
 

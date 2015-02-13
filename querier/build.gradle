@@ -17,9 +17,9 @@ startScripts {
     classpath += files('conf')
     doLast {
         def windowsScriptFile = file getWindowsScript()
-        def unixScriptFile    = file getUnixScript()
+        def unixScriptFile = file getUnixScript()
         windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\conf', '%APP_HOME%\\conf')
-        unixScriptFile.text    = unixScriptFile.text.replace('$APP_HOME/lib/conf', '$APP_HOME/conf')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/conf', '$APP_HOME/conf')
     }
 }
 

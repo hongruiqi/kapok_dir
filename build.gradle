@@ -16,7 +16,7 @@ allprojects {
 }
 
 subprojects {
-    version = ''
+    version = 'git describe'.execute(null, projectDir).text[0..<-1]
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 

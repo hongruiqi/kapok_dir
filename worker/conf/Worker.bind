@@ -1,0 +1,4 @@
+import cn.edu.scut.kapok.distributed.worker.retriever.BBTRetriever
+import cn.edu.scut.kapok.distributed.worker.spi.Retriever
+
+bind(Retriever.class).to(BBTRetriever.class)

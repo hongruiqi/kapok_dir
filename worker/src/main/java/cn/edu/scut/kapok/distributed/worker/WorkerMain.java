@@ -1,6 +1,7 @@
 package cn.edu.scut.kapok.distributed.worker;
 
 import cn.edu.scut.kapok.distributed.common.CommonModule;
+import cn.edu.scut.kapok.distributed.common.ConfigModule;
 import cn.edu.scut.kapok.distributed.worker.server.WorkerServer;
 import cn.edu.scut.kapok.distributed.worker.servlet.ServletsConfigModule;
 import com.google.inject.*;
@@ -96,7 +97,7 @@ public class WorkerMain {
 
     private static Module loadConfigModule() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         GroovyClassLoader loader = new GroovyClassLoader();
-        return (Module)loader.loadClass("WorkerModule").newInstance();
+        return (Module) loader.loadClass("WorkerModule").newInstance();
     }
 
     public static void main(String[] args) throws Exception {
@@ -104,7 +105,7 @@ public class WorkerMain {
         Injector injector = Guice.createInjector(
                 Stage.PRODUCTION,
                 new CommonModule(),
-                loadConfigModule(),
+                new ConfigModule("Worker.bind"),
                 new ServletsConfigModule());
 
         // init components.

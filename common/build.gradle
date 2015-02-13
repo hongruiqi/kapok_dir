@@ -1,6 +1,7 @@
 dependencies {
-    compile 'com.google.protobuf:protobuf-java:2.6.+'
     compile 'com.google.inject:guice:3.0'
+    compile 'com.google.inject.extensions:guice-servlet:3.0'
+    compile 'com.google.protobuf:protobuf-java:2.6.+'
     compile 'org.apache.curator:curator-recipes:2.7.+'
     compile project(':protos')
 }

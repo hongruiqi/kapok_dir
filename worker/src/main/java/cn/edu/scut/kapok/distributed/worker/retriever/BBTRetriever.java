@@ -67,7 +67,7 @@ public class BBTRetriever implements Retriever {
         String introT = doc.select("div.searchintro p strong").text();
         int total = Integer.valueOf(introT.split("//s+")[1]);
         results.setTotal(total);
-        for (Element elem: doc.select(".news_msg")) {
+        for (Element elem : doc.select(".news_msg")) {
             Element titleA = elem.select("h4 a").first();
             String url = titleA.absUrl("href");
             String title = titleA.text();
