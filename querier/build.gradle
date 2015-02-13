@@ -23,9 +23,8 @@ startScripts {
     }
 }
 
-applicationDistribution.into("conf") {
-    from rootProject.files("conf")
-
+applicationDistribution.into('conf') {
+    from rootProject.files('conf'), project.files('conf')
 }
 
 mainClassName = 'cn.edu.scut.kapok.distributed.querier.QuerierMain'

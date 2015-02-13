@@ -16,7 +16,7 @@ allprojects {
 }
 
 subprojects {
-    version = '1.0'
+    version = ''
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 

@@ -2,3 +2,30 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.+'
 }
 
+task compileProto(type:Exec) {
+    group 'ProtoBuf'
+    description 'Compile protobuf to java sources.'
+
+    def protoDir = file('src/main/proto')
+    def outputDir = project.sourceSets.main.java.srcDirs[0]
+    def protoFiles = protoDir.listFiles().collect() {
+        "${it.absolutePath}"
+    }
+    inputs.files 'src/main/proto'
+    outputs.dir outputDir
+    commandLine('protoc', '-I', protoDir, *protoFiles, '--java_out', outputDir)
+}
+
+compileJava.dependsOn compileProto
+
+task cleanProto(type:Delete) {
+    group 'ProtoBuf'
+    description 'Clean generated java sources.'
+
+    def outputDir = project.sourceSets.main.java.srcDirs[0]
+    outputs.dir outputDir
+
+    delete outputDir
+}
+
+clean.dependsOn cleanProto

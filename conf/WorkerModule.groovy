@@ -1,1 +1,0 @@
-../worker/src/main/groovy/WorkerModule.groovy
