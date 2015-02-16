@@ -2,8 +2,8 @@ package cn.edu.scut.kapok.distributed.querier.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import cn.edu.scut.kapok.distributed.querier.spi.search.SearchException;
-import cn.edu.scut.kapok.distributed.querier.spi.search.Searcher;
+import cn.edu.scut.kapok.distributed.querier.search.spi.SearchException;
+import cn.edu.scut.kapok.distributed.querier.search.spi.Searcher;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;

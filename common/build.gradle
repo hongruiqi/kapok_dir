@@ -4,4 +4,5 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.+'
     compile 'org.apache.curator:curator-recipes:2.7.+'
     compile project(':protos')
+    conf fileTree('conf')
 }

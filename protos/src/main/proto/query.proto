@@ -19,14 +19,11 @@ message BooleanQuery {
 }
 
 message Query {
-    enum Type {
-        WORD = 0;
-        LOGIC = 1;
+    oneof query_oneof {
+        WordQuery word_query = 1;
+        BooleanQuery boolean_query = 2;
     }
-    required Type type = 1;
-    optional bool not = 2;
-    optional WordQuery wordQuery = 3;
-    optional BooleanQuery booleanQuery = 4;
+    optional bool not = 3;
 }
 
 message QueryRequest {

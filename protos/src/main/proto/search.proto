@@ -7,7 +7,7 @@ option java_outer_classname = "SearchProto";
 message SearchRequest {
     required Query query = 1;
     required uint32 page = 2;
-    required uint32 perPage = 3;
+    required uint32 per_page = 3;
     repeated string resources = 4;
 }
 
@@ -22,6 +22,6 @@ message SearchResult {
 }
 
 message SearchResponse {
-    required uint64 totalHit = 1;
-    repeated ResourceStat resourceStats = 2;
+    required uint64 total_hit = 1;
+    repeated ResourceStat resource_stats = 2;
 }

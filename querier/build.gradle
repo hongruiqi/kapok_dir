@@ -5,12 +5,15 @@ dependencies {
     compile 'com.google.inject.extensions:guice-servlet:3.0'
     compile 'com.google.protobuf:protobuf-java:2.6.+'
     compile 'org.apache.curator:curator-recipes:2.7.+'
+    compile 'org.apache.httpcomponents:httpasyncclient:4.0.2'
     compile 'org.eclipse.jetty:jetty-client:9.2.+'
     compile 'org.eclipse.jetty:jetty-server:9.2.+'
     compile 'org.eclipse.jetty:jetty-servlet:9.2.+'
     compile project(':common')
     compile project(':protos')
-    compile project(':querier-spi')
+    testCompile 'org.mockito:mockito-core:1.10.+'
+    conf project(path:':common', configuration: 'conf')
+    conf fileTree('conf')
 }
 
 startScripts {
@@ -24,7 +27,7 @@ startScripts {
 }
 
 applicationDistribution.into('conf') {
-    from rootProject.files('conf'), project.files('conf')
+    from project.configurations.conf
 }
 
 mainClassName = 'cn.edu.scut.kapok.distributed.querier.QuerierMain'

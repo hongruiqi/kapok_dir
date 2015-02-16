@@ -1,5 +1,6 @@
 package cn.edu.scut.kapok.distributed.worker.server;
 
+import cn.edu.scut.kapok.distributed.worker.WorkerPropertyNames;
 import com.google.common.net.HostAndPort;
 import com.google.inject.servlet.GuiceFilter;
 import org.eclipse.jetty.server.Server;
@@ -24,7 +25,7 @@ public class WorkerServer {
     private final Server server;
 
     @Inject
-    public WorkerServer(@Named("worker.Addr") String addr) {
+    public WorkerServer(@Named(WorkerPropertyNames.WORKDER_ADDR) String addr) {
         HostAndPort tcpAddr = HostAndPort.fromString(checkNotNull(addr));
         InetSocketAddress sockAddr = new InetSocketAddress(tcpAddr.getHostText(), tcpAddr.getPortOrDefault(8000));
         server = new Server(sockAddr);

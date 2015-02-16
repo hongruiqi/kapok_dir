@@ -2,8 +2,7 @@ package cn.edu.scut.kapok.distributed.querier;
 
 import cn.edu.scut.kapok.distributed.common.CommonModule;
 import cn.edu.scut.kapok.distributed.common.ConfigModule;
-import cn.edu.scut.kapok.distributed.common.node.WorkerManager;
-import cn.edu.scut.kapok.distributed.querier.servlet.ServletsConfigModule;
+import cn.edu.scut.kapok.distributed.common.node.impl.zookeeper.ZooKeeperWorkerManager;
 import com.google.inject.*;
 import com.google.inject.name.Names;
 import org.apache.curator.framework.CuratorFramework;
@@ -15,7 +14,7 @@ import java.util.Stack;
 
 import static com.google.common.base.Preconditions.checkState;
 
-// Querier is the start point of the querier.
+// querier is the start point of the querier.
 public final class QuerierMain {
 
     private static final Logger logger = LoggerFactory.getLogger(QuerierMain.class);
@@ -73,9 +72,9 @@ public final class QuerierMain {
     }
 
     private static void setupWorkerManager(Injector injector) {
-        checkState(Scopes.isSingleton(injector.getBinding(WorkerManager.class)),
+        checkState(Scopes.isSingleton(injector.getBinding(ZooKeeperWorkerManager.class)),
                 "WorkerManager must be bound as singleton.");
-        final WorkerManager workerManager = injector.getInstance(WorkerManager.class);
+        final ZooKeeperWorkerManager workerManager = injector.getInstance(ZooKeeperWorkerManager.class);
         try {
             workerManager.start();
             logger.info("worker manager start");
@@ -117,8 +116,7 @@ public final class QuerierMain {
         Injector injector = Guice.createInjector(
                 Stage.PRODUCTION,
                 new CommonModule(),
-                new ConfigModule("Querier.bind"),
-                new ServletsConfigModule());
+                new ConfigModule("querier.bind"));
 
         // init components.
         initShutdownHook();

@@ -2,7 +2,7 @@ package cn.edu.scut.kapok.distributed.worker.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
-import cn.edu.scut.kapok.distributed.worker.spi.Retriever;
+import cn.edu.scut.kapok.distributed.worker.retriever.spi.Retriever;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;

@@ -1,10 +1,14 @@
 apply plugin: 'idea'
 
 allprojects {
-    apply plugin: 'java'
+    apply plugin: 'groovy'
 
     repositories {
         mavenCentral()
+    }
+
+    configurations {
+        conf
     }
 
     dependencies {
@@ -12,15 +16,14 @@ allprojects {
         compile 'com.google.code.findbugs:jsr305:3.0.0'
         compile 'com.google.guava:guava:18.0'
         compile 'org.slf4j:slf4j-log4j12:1.7.+'
+        testCompile 'junit:junit:4.+'
     }
 }
 
 subprojects {
-    version = 'git describe'.execute(null, projectDir).text[0..<-1]
+    version = 'git describe'.execute(null, projectDir).in.text.trim()
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
-
-    project.buildDir = rootProject.buildDir
 
     jar.baseName = "${rootProject.name}-${project.name}"
 }

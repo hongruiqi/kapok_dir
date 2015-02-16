@@ -27,9 +27,9 @@ public class WorkerRegistry {
 
     @Inject
     public WorkerRegistry(
-            @Named("worker.Name") String workerName,
-            @Named("worker.UUID") String workerUUID,
-            @Named("worker.Addr") String workerAddr,
+            @Named(WorkerPropertyNames.WORKDER_NAME) String workerName,
+            @Named(WorkerPropertyNames.WORKDER_UUID) String workerUUID,
+            @Named(WorkerPropertyNames.WORKDER_ADDR) String workerAddr,
             CuratorFramework cf) {
         this.workerName = checkNotNull(workerName);
         this.workerUUID = checkNotNull(workerUUID);
