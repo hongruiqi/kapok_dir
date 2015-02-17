@@ -21,7 +21,7 @@ allprojects {
 }
 
 subprojects {
-    version = 'git describe'.execute(null, projectDir).in.text.trim()
+    version = 'git describe --dirty=+'.execute(null, projectDir).in.text.trim()
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 

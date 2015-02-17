@@ -1,4 +1,4 @@
-apply plugin: 'application'
+apply plugin: 'distribution'
 
 dependencies {
     compile 'com.google.inject:guice:3.0'
@@ -15,18 +15,16 @@ dependencies {
     conf fileTree('conf')
 }
 
-startScripts {
-    classpath += files('conf')
-    doLast {
-        def windowsScriptFile = file getWindowsScript()
-        def unixScriptFile = file getUnixScript()
-        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\conf', '%APP_HOME%\\conf')
-        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/conf', '$APP_HOME/conf')
+distributions {
+    main {
+        contents {
+            into('conf') {
+                from project.configurations.conf
+            }
+            into('lib') {
+                from project.configurations.runtime
+                from project.tasks.jar.outputs
+            }
+        }
     }
 }
-
-applicationDistribution.into('conf') {
-    from project.configurations.conf
-}
-
-mainClassName = 'cn.edu.scut.kapok.distributed.worker.WorkerMain'
