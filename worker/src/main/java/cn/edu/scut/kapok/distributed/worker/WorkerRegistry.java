@@ -47,17 +47,24 @@ public class WorkerRegistry {
     // The node stores the information about the worker.
     public void start() {
         // Build protobuf message.
-        final WorkerInfo info = WorkerInfo.newBuilder().setName(workerName)
+        WorkerInfo info = createWorkerInfo();
+
+        node = createNode(cf, info);
+        node.start();
+        logger.info("worker node: {}", info.toString().replace("\n", " "));
+    }
+
+    private WorkerInfo createWorkerInfo() {
+        return WorkerInfo.newBuilder().setName(workerName)
                 .setUuid(workerUUID)
                 .setAddr(workerAddr).build();
+    }
 
-        // Create the worker node, and start event loop.
-        node = new PersistentEphemeralNode(cf,
+    PersistentEphemeralNode createNode(CuratorFramework cf, WorkerInfo info) {
+        return new PersistentEphemeralNode(cf,
                 PersistentEphemeralNode.Mode.PROTECTED_EPHEMERAL_SEQUENTIAL,
                 ZKPath.WORKERS + "/instance-",
                 info.toByteArray());
-        node.start();
-        logger.info("worker node: {}", info.toString().replace("\n", " "));
     }
 
     // Close the node in ZooKeeper.

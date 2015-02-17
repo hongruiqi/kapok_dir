@@ -2,6 +2,15 @@ apply plugin: 'idea'
 
 allprojects {
     apply plugin: 'groovy'
+    apply plugin: 'maven'
+
+    task pom << {
+        pom {
+            project {
+            }
+        }.writeTo("pom.xml")
+    }
+    tasks.assemble.dependsOn pom
 
     repositories {
         mavenCentral()

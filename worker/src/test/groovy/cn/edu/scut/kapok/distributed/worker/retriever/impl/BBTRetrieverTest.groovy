@@ -1,4 +1,5 @@
 package cn.edu.scut.kapok.distributed.worker.retriever.impl
+
 import cn.edu.scut.kapok.distributed.worker.retriever.spi.RetrieveException
 import com.google.common.collect.Lists
 import com.google.common.io.ByteStreams
