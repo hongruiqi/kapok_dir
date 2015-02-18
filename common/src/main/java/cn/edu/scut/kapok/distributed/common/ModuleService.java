@@ -5,5 +5,6 @@ import com.google.inject.Module;
 
 public interface ModuleService extends Module {
     void start(Injector injector);
+
     void stop(Injector injector);
 }

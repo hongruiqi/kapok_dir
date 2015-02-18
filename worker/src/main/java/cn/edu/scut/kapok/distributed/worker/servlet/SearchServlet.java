@@ -2,6 +2,7 @@ package cn.edu.scut.kapok.distributed.worker.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
+import cn.edu.scut.kapok.distributed.worker.retriever.spi.RetrieveException;
 import cn.edu.scut.kapok.distributed.worker.retriever.spi.Retriever;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Singleton
 public class SearchServlet extends HttpServlet {
@@ -40,18 +43,25 @@ public class SearchServlet extends HttpServlet {
         try (InputStream in = req.getInputStream()) {
             queryRequest = QueryRequest.parseFrom(in);
         } catch (IOException e) {
-            logger.warn("reading input", e);
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        ListenableFuture<QueryResponse> future = retriever.retrieve(queryRequest);
-        Futures.addCallback(future, new FutureCallback<QueryResponse>() {
+
+        ListenableFuture<QueryResponse> future;
+        try {
+            future = retriever.retrieve(queryRequest);
+        } catch (RetrieveException e) {
+            throw new ServletException(e);
+        }
+        checkNotNull(future);
+
+        addCallback(future, new FutureCallback<QueryResponse>() {
             @Override
             public void onSuccess(QueryResponse result) {
                 try (OutputStream out = resp.getOutputStream()) {
                     result.writeTo(out);
                 } catch (IOException e) {
-                    logger.error("sending worker response", e);
+                    logger.debug("write response error.", e);
                 } finally {
                     asyncContext.complete();
                 }
@@ -62,11 +72,15 @@ public class SearchServlet extends HttpServlet {
                 try {
                     resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } catch (IOException e) {
-                    logger.warn("sending worker error", e);
+                    logger.debug("write response error.", e);
                 } finally {
                     asyncContext.complete();
                 }
             }
         });
+    }
+
+    void addCallback(ListenableFuture<QueryResponse> future, FutureCallback<QueryResponse> callback) {
+        Futures.addCallback(future, callback);
     }
 }

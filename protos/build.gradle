@@ -8,7 +8,7 @@ task compileProto(type: Exec) {
 
     def protoDir = file('proto')
     def outputDir = sourceSets.main.java.srcDirs[0]
-    def  protoFiles = protoDir.listFiles().collect() { it.absolutePath }
+    def protoFiles = protoDir.listFiles().collect() { it.absolutePath }
     inputs.dir 'proto'
     outputs.dir outputDir
 

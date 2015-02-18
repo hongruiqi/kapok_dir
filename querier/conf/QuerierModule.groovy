@@ -52,8 +52,12 @@ class QuerierModule extends ServletModule implements ModuleService {
 
     private void bindCuratorFramework() {
         bind(CuratorFramework.class).toProvider(new Provider<CuratorFramework>() {
-            @Inject @Named("ZooKeeper.connectString") String connectString
-            @Inject @Named("ZooKeeper.sessionTimeout") int sessionTimeout
+            @Inject
+            @Named("ZooKeeper.connectString")
+            String connectString
+            @Inject
+            @Named("ZooKeeper.sessionTimeout")
+            int sessionTimeout
 
             @Override
             CuratorFramework get() {

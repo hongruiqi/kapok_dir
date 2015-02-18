@@ -51,7 +51,7 @@ public class KapokSearcher implements Searcher {
         final SettableFuture<SearchResponse> future = SettableFuture.create();
 
         List<WorkerInfo> candidateWorkers;
-        if (request.getResourcesCount()==0) {
+        if (request.getResourcesCount() == 0) {
             candidateWorkers = workerManager.getWorkers().values().asList();
         } else {
             candidateWorkers = resourcesToWorkerInfo(request.getResourcesList());

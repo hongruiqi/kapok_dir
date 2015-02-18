@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.worker.retriever.impl;
+package cn.edu.scut.kapok.distributed.worker.retriever.impl.bbt;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
@@ -24,29 +24,22 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @Singleton
 public class BBTRetriever implements Retriever {
 
-    private final Logger logger = LoggerFactory.getLogger(BBTRetriever.class);
-
-    private final HttpAsyncClient httpClient;
-
     private static final String BBTSearchURL = "http://www.100steps.net/index.php?searchword=%s&searchphrase=all&limit=%d&option=com_search&limitstart=%d";
+    private final Logger logger = LoggerFactory.getLogger(BBTRetriever.class);
+    private final HttpAsyncClient httpClient;
 
     @Inject
     public BBTRetriever(HttpAsyncClient httpClient) {
         this.httpClient = httpClient;
-    }
-
-    public static String getBBTSearchURL() {
-        return BBTSearchURL;
     }
 
     List<String> extractWords(Query query) {
@@ -73,7 +66,7 @@ public class BBTRetriever implements Retriever {
         Document doc;
         doc = Jsoup.parse(in, null, "http://www.100steps.net/index.php");
         String introT = doc.select("div.searchintro p strong").text();
-        int total = Integer.valueOf(introT.replaceAll("[^0-9]+", ""));
+        int total = Integer.parseInt(introT.replaceAll("[^0-9]+", ""));
         results.setTotal(total);
         for (Element elem : doc.select(".news_msg")) {
             Element titleA = elem.select("h4 a").first();
@@ -93,24 +86,14 @@ public class BBTRetriever implements Retriever {
         try {
             return String.format(BBTSearchURL,
                     URLEncoder.encode(query, "utf8"), count, from);
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public ListenableFuture<QueryResponse> retrieve(QueryRequest request) {
-        checkNotNull(request);
+    public ListenableFuture<QueryResponse> retrieve(QueryRequest queryRequest) throws RetrieveException {
         final SettableFuture<QueryResponse> future = SettableFuture.create();
-        try {
-            _retrieve(request, future);
-        } catch (Throwable t) {
-            future.setException(t);
-        }
-        return future;
-    }
-
-    private void _retrieve(QueryRequest queryRequest, final SettableFuture<QueryResponse> future) throws RetrieveException {
         List<String> words = extractWords(queryRequest.getQuery());
         String query = Joiner.on(" ").join(words);
 
@@ -122,24 +105,26 @@ public class BBTRetriever implements Retriever {
         httpClient.execute(request, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(HttpResponse result) {
-                if (result.getStatusLine().getStatusCode() != org.apache.http.HttpStatus.SC_OK) {
-                    future.setException(new RetrieveException("bbt response code error"));
-                    return;
-                }
-                BBTResultList results;
                 try {
-                    results = extractResult(result.getEntity().getContent());
-                } catch (Throwable e) {
-                    future.setException(new RetrieveException(e));
-                    return;
+                    int statusCode = result.getStatusLine().getStatusCode();
+                    if (statusCode != org.apache.http.HttpStatus.SC_OK) {
+                        throw new UnexpectedStatusCodeException(statusCode);
+                    }
+                    BBTResultList results = extractResult(result.getEntity().getContent());
+                    QueryResponse resp = bbtResultsToQueryResponse(results);
+                    future.set(resp);
+                } catch (Throwable t) {
+                    if (t instanceof UnexpectedStatusCodeException) {
+                        future.setException(t);
+                        return;
+                    }
+                    future.setException(new RetrieveException(t));
                 }
-                QueryResponse resp = bbtResultsToQueryResponse(results);
-                future.set(resp);
             }
 
             @Override
             public void failed(Exception ex) {
-                future.setException(new RetrieveException(ex));
+                future.setException(new RetrieveFailedException(ex));
             }
 
             @Override
@@ -147,6 +132,8 @@ public class BBTRetriever implements Retriever {
                 future.cancel(true);
             }
         });
+
+        return future;
     }
 
     QueryResponse bbtResultsToQueryResponse(BBTResultList results) {

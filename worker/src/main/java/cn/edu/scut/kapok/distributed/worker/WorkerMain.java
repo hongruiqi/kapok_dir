@@ -1,8 +1,8 @@
 package cn.edu.scut.kapok.distributed.worker;
 
+import cn.edu.scut.kapok.distributed.common.HttpServer;
 import cn.edu.scut.kapok.distributed.common.ModuleService;
 import cn.edu.scut.kapok.distributed.common.ModuleServiceUtil;
-import cn.edu.scut.kapok.distributed.worker.server.WorkerServer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -17,12 +17,13 @@ public class WorkerMain {
 
     // Start worker server.
     private static void startWorkerServer(Injector injector) {
-        WorkerServer workerServer = injector.getInstance(WorkerServer.class);
+        HttpServer workerServer = injector.getInstance(HttpServer.class);
         try {
             String serverAddr = injector.getInstance(
                     Key.get(String.class, Names.named(WorkerPropertyNames.WORKDER_ADDR)));
             logger.info("server listening at: {}", serverAddr);
             workerServer.start();
+            workerServer.join();
         } catch (Exception e) {
             logger.error("can't start server", e);
         }
@@ -44,7 +45,7 @@ public class WorkerMain {
             return;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 workerModule.stop(injector);

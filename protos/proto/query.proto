@@ -19,10 +19,7 @@ message BooleanQuery {
 }
 
 message Query {
-    oneof query_oneof {
-        WordQuery word_query = 1;
-        BooleanQuery boolean_query = 2;
-    }
+    oneof query_oneof { WordQuery word_query = 1; BooleanQuery boolean_query = 2; }
     optional bool not = 3;
 }
 

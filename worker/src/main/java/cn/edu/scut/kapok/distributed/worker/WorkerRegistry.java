@@ -4,6 +4,7 @@ import cn.edu.scut.kapok.distributed.common.ZKPath;
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode;
+import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class WorkerRegistry {
         // Build protobuf message.
         WorkerInfo info = createWorkerInfo();
 
-        node = createNode(cf, info);
+        node = createNode(cf, Mode.PROTECTED_EPHEMERAL_SEQUENTIAL, ZKPath.WORKERS + "/instance-", info);
         node.start();
         logger.info("worker node: {}", info.toString().replace("\n", " "));
     }
@@ -60,10 +61,10 @@ public class WorkerRegistry {
                 .setAddr(workerAddr).build();
     }
 
-    PersistentEphemeralNode createNode(CuratorFramework cf, WorkerInfo info) {
+    PersistentEphemeralNode createNode(CuratorFramework cf, Mode mode, String path, WorkerInfo info) {
         return new PersistentEphemeralNode(cf,
-                PersistentEphemeralNode.Mode.PROTECTED_EPHEMERAL_SEQUENTIAL,
-                ZKPath.WORKERS + "/instance-",
+                mode,
+                path,
                 info.toByteArray());
     }
 
