@@ -20,7 +20,7 @@ public class WorkerMain {
         HttpServer workerServer = injector.getInstance(HttpServer.class);
         try {
             String serverAddr = injector.getInstance(
-                    Key.get(String.class, Names.named(WorkerPropertyNames.WORKDER_ADDR)));
+                    Key.get(String.class, Names.named(WorkerPropertyNames.WORKER_ADDR)));
             logger.info("server listening at: {}", serverAddr);
             workerServer.start();
             workerServer.join();

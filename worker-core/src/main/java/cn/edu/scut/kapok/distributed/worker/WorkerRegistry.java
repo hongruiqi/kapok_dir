@@ -24,23 +24,21 @@ public class WorkerRegistry {
     private final String workerName;
     private final String workerUUID;
     private final String workerAddr;
+    private final String workerPath;
     private PersistentEphemeralNode node;
 
     @Inject
     public WorkerRegistry(
-            @Named(WorkerPropertyNames.WORKDER_NAME) String workerName,
-            @Named(WorkerPropertyNames.WORKDER_UUID) String workerUUID,
-            @Named(WorkerPropertyNames.WORKDER_ADDR) String workerAddr,
+            @Named(WorkerPropertyNames.WORKER_NAME) String workerName,
+            @Named(WorkerPropertyNames.WORKER_UUID) String workerUUID,
+            @Named(WorkerPropertyNames.WORKER_ADDR) String workerAddr,
+            @Named(WorkerPropertyNames.WORKER_PATH) String workerPath,
             CuratorFramework cf) {
         this.workerName = checkNotNull(workerName);
         this.workerUUID = checkNotNull(workerUUID);
         this.workerAddr = checkNotNull(workerAddr);
+        this.workerPath = checkNotNull(workerPath);
         this.cf = checkNotNull(cf);
-    }
-
-    // Return the workerAddr provided.
-    public String getWorkerAddr() {
-        return workerAddr;
     }
 
     // Start the registry service.
@@ -58,7 +56,7 @@ public class WorkerRegistry {
     private WorkerInfo createWorkerInfo() {
         return WorkerInfo.newBuilder().setName(workerName)
                 .setUuid(workerUUID)
-                .setAddr(workerAddr).build();
+                .setAddr(String.format("http://%s%s", workerAddr, workerPath)).build();
     }
 
     PersistentEphemeralNode createNode(Mode mode, String path, WorkerInfo info) {

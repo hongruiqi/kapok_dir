@@ -17,8 +17,6 @@ import org.apache.http.nio.client.HttpAsyncClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,7 +32,6 @@ import java.util.List;
 public class BBTRetriever implements Retriever {
 
     private static final String BBTSearchURL = "http://www.100steps.net/index.php?searchword=%s&searchphrase=all&limit=%d&option=com_search&limitstart=%d";
-    private final Logger logger = LoggerFactory.getLogger(BBTRetriever.class);
     private final HttpAsyncClient httpClient;
 
     @Inject

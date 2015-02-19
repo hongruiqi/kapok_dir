@@ -21,9 +21,9 @@ public class InfoServlet extends HttpServlet {
     private final String workerAddr;
 
     @Inject
-    public InfoServlet(@Named(WorkerPropertyNames.WORKDER_NAME) String workerName,
-                       @Named(WorkerPropertyNames.WORKDER_UUID) String workerUUID,
-                       @Named(WorkerPropertyNames.WORKDER_ADDR) String workerAddr) {
+    public InfoServlet(@Named(WorkerPropertyNames.WORKER_NAME) String workerName,
+                       @Named(WorkerPropertyNames.WORKER_UUID) String workerUUID,
+                       @Named(WorkerPropertyNames.WORKER_ADDR) String workerAddr) {
         this.workerName = workerName;
         this.workerUUID = workerUUID;
         this.workerAddr = workerAddr;

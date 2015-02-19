@@ -26,6 +26,7 @@ class WorkerRegistryTest {
                 "TestWorker",
                 "UUID",
                 "192.168.0.1",
+                "/search",
                 cf
         ))
         workerInfoCaptor = ArgumentCaptor.forClass(WorkerInfo.class)
@@ -47,7 +48,7 @@ class WorkerRegistryTest {
         def workerInfo = workerInfoCaptor.value
         assert workerInfo.getName() == "TestWorker"
         assert workerInfo.getUuid() == "UUID"
-        assert workerInfo.getAddr() == "192.168.0.1"
+        assert workerInfo.getAddr() == "http://192.168.0.1/search"
         assert modeCaptor.value == PersistentEphemeralNode.Mode.PROTECTED_EPHEMERAL_SEQUENTIAL
         assert pathCaptor.value == ZKPath.WORKERS + "/instance-"
     }

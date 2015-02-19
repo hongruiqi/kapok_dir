@@ -7,7 +7,6 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:2.6.+'
     compile 'org.apache.curator:curator-recipes:2.7.+'
     compile 'org.apache.httpcomponents:httpasyncclient:4.0.2'
-    compile 'org.eclipse.jetty:jetty-client:9.2.+'
     compile 'org.eclipse.jetty:jetty-server:9.2.+'
     compile 'org.eclipse.jetty:jetty-servlet:9.2.+'
     compile project(':common')

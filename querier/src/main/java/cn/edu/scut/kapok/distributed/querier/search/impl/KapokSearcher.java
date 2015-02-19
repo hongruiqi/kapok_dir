@@ -9,6 +9,7 @@ import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
 import cn.edu.scut.kapok.distributed.querier.api.search.SearchException;
 import cn.edu.scut.kapok.distributed.querier.api.search.Searcher;
 import cn.edu.scut.kapok.distributed.querier.api.search.WorkerAndQueryResponse;
+import cn.edu.scut.kapok.distributed.querier.api.search.fetch.FetchException;
 import cn.edu.scut.kapok.distributed.querier.api.search.fetch.Fetcher;
 import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.MergeException;
 import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.Merger;
@@ -73,7 +74,13 @@ public class KapokSearcher implements Searcher {
 
         List<ListenableFuture<QueryResponse>> futures = new ArrayList<>(workers.size());
         for (WorkerInfo worker : workers) {
-            futures.add(fetcher.fetch(worker, queryRequest));
+            try {
+                futures.add(fetcher.fetch(worker, queryRequest));
+            } catch (FetchException e) {
+                SettableFuture<QueryResponse> f = SettableFuture.create();
+                f.setException(e);
+                futures.add(f);
+            }
         }
 
         Futures.addCallback(Futures.successfulAsList(futures), new FutureCallback<List<QueryResponse>>() {
