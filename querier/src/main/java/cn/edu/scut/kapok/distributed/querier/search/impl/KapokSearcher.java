@@ -1,6 +1,6 @@
 package cn.edu.scut.kapok.distributed.querier.search.impl;
 
-import cn.edu.scut.kapok.distributed.common.node.spi.WorkerManager;
+import cn.edu.scut.kapok.distributed.common.node.WorkerManager;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;

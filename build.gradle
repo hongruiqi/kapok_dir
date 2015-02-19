@@ -6,18 +6,21 @@ allprojects {
 
     task pom << {
         pom {
-            project {
-            }
         }.writeTo("pom.xml")
     }
     tasks.assemble.dependsOn pom
 
-    repositories {
-        mavenCentral()
+    apply plugin: 'findbugs'
+
+    tasks.withType(FindBugs) {
+        reports {
+            html.enabled = true
+            xml.enabled = false
+        }
     }
 
-    configurations {
-        conf
+    repositories {
+        mavenCentral()
     }
 
     dependencies {

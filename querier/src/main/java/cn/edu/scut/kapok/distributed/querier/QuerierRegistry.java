@@ -21,9 +21,9 @@ public class QuerierRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(QuerierRegistry.class);
 
-    private final CuratorFramework cf; // used to communicate with ZooKeeper.
+    private final CuratorFramework cf; // used to communicate with zk.
     private final String querierAddr; // listening address of querier server.
-    private PersistentEphemeralNode node; // ZooKeeper node for registry.
+    private PersistentEphemeralNode node; // zk node for registry.
 
     @Inject
     public QuerierRegistry(@Named("querier.Addr") String querierAddr, CuratorFramework cf) {
@@ -42,7 +42,7 @@ public class QuerierRegistry {
     }
 
     // Start the registry service.
-    // The service creates a node in ZooKeeper for the querier, and maintains its state.
+    // The service creates a node in zk for the querier, and maintains its state.
     // The node stores the information about the querier.
     public void start() {
         // Build protobuf message.
@@ -64,7 +64,7 @@ public class QuerierRegistry {
         logger.info("create querier node: {}", info.toString().replace("\n", " "));
     }
 
-    // Close the node in ZooKeeper.
+    // Close the node in zk.
     // The node is deleted after being closed.
     public void close() throws IOException {
         node.close();
