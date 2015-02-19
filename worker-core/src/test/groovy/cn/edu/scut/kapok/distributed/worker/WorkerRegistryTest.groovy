@@ -1,5 +1,4 @@
 package cn.edu.scut.kapok.distributed.worker
-
 import cn.edu.scut.kapok.distributed.common.ZKPath
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode
@@ -8,7 +7,6 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 
 import static cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo
-import static org.mockito.Matchers.any
 import static org.mockito.Mockito.*
 
 class WorkerRegistryTest {
@@ -33,7 +31,7 @@ class WorkerRegistryTest {
         workerInfoCaptor = ArgumentCaptor.forClass(WorkerInfo.class)
         modeCaptor = ArgumentCaptor.forClass(PersistentEphemeralNode.Mode.class)
         pathCaptor = ArgumentCaptor.forClass(String.class)
-        doReturn(node).when(registry).createNode(any(CuratorFramework.class),
+        doReturn(node).when(registry).createNode(
                 modeCaptor.capture(),
                 pathCaptor.capture(),
                 workerInfoCaptor.capture())

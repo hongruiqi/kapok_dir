@@ -2,9 +2,9 @@ package cn.edu.scut.kapok.distributed.querier.search.impl.resource.merger;
 
 
 import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import cn.edu.scut.kapok.distributed.querier.search.spi.WorkerAndQueryResponse;
-import cn.edu.scut.kapok.distributed.querier.search.spi.resource.merger.MergeException;
-import cn.edu.scut.kapok.distributed.querier.search.spi.resource.merger.Merger;
+import cn.edu.scut.kapok.distributed.querier.api.search.WorkerAndQueryResponse;
+import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.MergeException;
+import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.Merger;
 
 import javax.inject.Singleton;
 import java.util.List;

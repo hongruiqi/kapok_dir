@@ -1,8 +1,8 @@
 package cn.edu.scut.kapok.distributed.querier.search.impl.fetch;
 
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
-import cn.edu.scut.kapok.distributed.querier.search.spi.fetch.FetchException;
-import cn.edu.scut.kapok.distributed.querier.search.spi.fetch.Fetcher;
+import cn.edu.scut.kapok.distributed.querier.api.search.fetch.FetchException;
+import cn.edu.scut.kapok.distributed.querier.api.search.fetch.Fetcher;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
@@ -67,7 +67,7 @@ public class SimpleFetcher implements Fetcher {
                     return;
                 }
                 if (result.getResponse().getStatus() != HttpStatus.OK_200) {
-                    future.setException(new FetchException("worker response code error"));
+                    future.setException(new FetchException("querier response code error"));
                 }
             }
         });

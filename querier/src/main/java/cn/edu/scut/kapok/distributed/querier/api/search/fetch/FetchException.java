@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.search.spi.fetch;
+package cn.edu.scut.kapok.distributed.querier.api.search.fetch;
 
 public class FetchException extends Exception {
     public FetchException() {

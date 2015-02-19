@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.search.spi.resource.selector;
+package cn.edu.scut.kapok.distributed.querier.api.search.resource.selector;
 
 public class SelectException extends Exception {
     public SelectException() {

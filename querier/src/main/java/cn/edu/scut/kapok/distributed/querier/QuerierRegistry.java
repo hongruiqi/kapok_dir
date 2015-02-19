@@ -26,7 +26,9 @@ public class QuerierRegistry {
     private PersistentEphemeralNode node; // zk node for registry.
 
     @Inject
-    public QuerierRegistry(@Named("querier.Addr") String querierAddr, CuratorFramework cf) {
+    public QuerierRegistry(
+            @Named("querier.addr") String querierAddr,
+            CuratorFramework cf) {
         this.cf = checkNotNull(cf);
         this.querierAddr = checkNotNull(querierAddr);
     }
@@ -45,6 +47,14 @@ public class QuerierRegistry {
     // The service creates a node in zk for the querier, and maintains its state.
     // The node stores the information about the querier.
     public void start() {
+        QuerierInfo info = createQuerierInfo();
+
+        node = createNode(info);
+        node.start();
+        logger.info("create querier node: {}", info.toString().replace("\n", " "));
+    }
+
+    private QuerierInfo createQuerierInfo() {
         // Build protobuf message.
         QuerierInfo.Builder builder = QuerierInfo.newBuilder();
         builder.setAddr(querierAddr);
@@ -53,15 +63,16 @@ public class QuerierRegistry {
         if (hostname != null) {
             builder.setHostname(hostname);
         }
-        final QuerierInfo info = builder.build();
+        return builder.build();
+    }
 
+    PersistentEphemeralNode createNode(QuerierInfo info) {
         // Create the querier node, and start event loop.
         node = new PersistentEphemeralNode(cf,
                 PersistentEphemeralNode.Mode.PROTECTED_EPHEMERAL_SEQUENTIAL,
                 ZKPath.QUERIERS + "/instance-",
                 info.toByteArray());
-        node.start();
-        logger.info("create querier node: {}", info.toString().replace("\n", " "));
+        return node;
     }
 
     // Close the node in zk.

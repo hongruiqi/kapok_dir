@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.querier.search.spi;
+package cn.edu.scut.kapok.distributed.querier.api.search;
 
 import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
 import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;

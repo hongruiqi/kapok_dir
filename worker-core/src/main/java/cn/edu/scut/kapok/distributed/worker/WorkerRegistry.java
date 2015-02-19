@@ -50,7 +50,7 @@ public class WorkerRegistry {
         // Build protobuf message.
         WorkerInfo info = createWorkerInfo();
 
-        node = createNode(cf, Mode.PROTECTED_EPHEMERAL_SEQUENTIAL, ZKPath.WORKERS + "/instance-", info);
+        node = createNode(Mode.PROTECTED_EPHEMERAL_SEQUENTIAL, ZKPath.WORKERS + "/instance-", info);
         node.start();
         logger.info("worker node: {}", info.toString().replace("\n", " "));
     }
@@ -61,7 +61,7 @@ public class WorkerRegistry {
                 .setAddr(workerAddr).build();
     }
 
-    PersistentEphemeralNode createNode(CuratorFramework cf, Mode mode, String path, WorkerInfo info) {
+    PersistentEphemeralNode createNode(Mode mode, String path, WorkerInfo info) {
         return new PersistentEphemeralNode(cf,
                 mode,
                 path,

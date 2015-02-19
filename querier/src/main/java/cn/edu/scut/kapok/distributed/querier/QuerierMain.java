@@ -1,130 +1,59 @@
 package cn.edu.scut.kapok.distributed.querier;
 
-import cn.edu.scut.kapok.distributed.common.CommonModule;
-import cn.edu.scut.kapok.distributed.common.ConfigModule;
-import cn.edu.scut.kapok.distributed.common.node.impl.zookeeper.ZooKeeperWorkerManager;
-import com.google.inject.*;
+import cn.edu.scut.kapok.distributed.common.HttpServer;
+import cn.edu.scut.kapok.distributed.common.ModuleService;
+import cn.edu.scut.kapok.distributed.common.ModuleServiceUtil;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Stage;
 import com.google.inject.name.Names;
-import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Stack;
-
-import static com.google.common.base.Preconditions.checkState;
 
 // querier is the start point of the querier.
 public final class QuerierMain {
 
     private static final Logger logger = LoggerFactory.getLogger(QuerierMain.class);
 
-    // Hooks that is called when shutdown.
-    private static Stack<Runnable> shutdownHooks = new Stack<>();
-
-    // Register shutdown hook thread.
-    private static void initShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                while (!shutdownHooks.empty()) {
-                    Runnable hook = shutdownHooks.pop();
-                    hook.run();
-                }
-            }
-        });
-    }
-
-    // Start CuratorFramework and add shutdown hook.
-    private static void setupCuratorFramework(Injector injector) {
-        checkState(Scopes.isSingleton(injector.getBinding(CuratorFramework.class)),
-                "CuratorFramework must be bound as singleton.");
-        final CuratorFramework cf = injector.getInstance(CuratorFramework.class);
-        cf.start();
-        shutdownHooks.push(new Runnable() {
-            @Override
-            public void run() {
-                cf.close();
-                logger.info("CuratorFramework closed");
-            }
-        });
-    }
-
-    // Start Registry and add shutdown hook.
-    private static void setupRegistry(Injector injector) {
-        checkState(Scopes.isSingleton(injector.getBinding(QuerierRegistry.class)),
-                "QuerierRegistry must be bound as singleton.");
-        final QuerierRegistry registry = injector.getInstance(QuerierRegistry.class);
-        registry.start();
-        logger.info("querier registry start");
-        shutdownHooks.push(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    registry.close();
-                    logger.info("registry closed");
-                } catch (IOException e) {
-                    logger.error("registry close error", e);
-                    // ignore intended.
-                }
-            }
-        });
-    }
-
-    private static void setupWorkerManager(Injector injector) {
-        checkState(Scopes.isSingleton(injector.getBinding(ZooKeeperWorkerManager.class)),
-                "WorkerManager must be bound as singleton.");
-        final ZooKeeperWorkerManager workerManager = injector.getInstance(ZooKeeperWorkerManager.class);
-        try {
-            workerManager.start();
-            logger.info("worker manager start");
-        } catch (Exception e) {
-            logger.error("worker manager can' start", e);
-            return;
-        }
-        shutdownHooks.push(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    workerManager.close();
-                    logger.info("worker manager closed");
-                } catch (Exception e) {
-                    logger.error("workerManager close error", e);
-                    // ignore intended.
-                }
-            }
-        });
-    }
-
     // Start querier server.
-    private static void startQuerierServer(Injector injector) {
-        // start server.
-        checkState(Scopes.isSingleton(injector.getBinding(QuerierServer.class)),
-                "QuerierServer must be bound as singleton.");
-        QuerierServer querierServer = injector.getInstance(QuerierServer.class);
+    private static void startWorkerServer(Injector injector) {
+        HttpServer workerServer = injector.getInstance(HttpServer.class);
         try {
-            String serverAddr = injector.getInstance(Key.get(String.class, Names.named("querier.Addr")));
-            logger.info("server listening at: {}", serverAddr);
-            querierServer.start();
+            String querierAddr = injector.getInstance(
+                    Key.get(String.class, Names.named("querier.addr")));
+            logger.info("server listening at: {}", querierAddr);
+            workerServer.start();
+            workerServer.join();
         } catch (Exception e) {
-            logger.error("can't start querierServer", e);
+            logger.error("can't start server", e);
         }
     }
 
     public static void main(String[] args) throws Exception {
-        // create injector.
-        Injector injector = Guice.createInjector(
-                Stage.PRODUCTION,
-                new CommonModule(),
-                new ConfigModule("querier.bind"));
+        final ModuleService querierModule = ModuleServiceUtil.load("QuerierModule");
 
-        // init components.
-        initShutdownHook();
-        setupCuratorFramework(injector);
-        setupWorkerManager(injector);
-        setupRegistry(injector);
+        // create injector.
+        final Injector injector = Guice.createInjector(
+                Stage.PRODUCTION,
+                querierModule);
+
+        try {
+            querierModule.start(injector);
+        } catch (Throwable t) {
+            logger.error("Can't start querier module.", t);
+            querierModule.stop(injector);
+            return;
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                querierModule.stop(injector);
+            }
+        });
 
         // start server.
-        startQuerierServer(injector);
+        startWorkerServer(injector);
     }
 }
