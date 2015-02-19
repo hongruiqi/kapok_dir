@@ -38,9 +38,8 @@ public class QuerierRegistry {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ignored) {
-            // ignored intended
+            return null;
         }
-        return null;
     }
 
     // Start the registry service.

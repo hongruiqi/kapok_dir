@@ -1,4 +1,13 @@
 apply plugin: 'jacoco'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
+
+tasks.withType(FindBugs) {
+    reports {
+        html.enabled = true
+        xml.enabled = false
+    }
+}
 
 dependencies {
     compile 'com.google.inject:guice:3.0'

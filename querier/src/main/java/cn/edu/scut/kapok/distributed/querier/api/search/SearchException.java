@@ -1,6 +1,6 @@
 package cn.edu.scut.kapok.distributed.querier.api.search;
 
-public class SearchException extends Throwable {
+public class SearchException extends Exception {
     public SearchException() {
     }
 

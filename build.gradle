@@ -10,15 +10,6 @@ allprojects {
     }
     tasks.assemble.dependsOn pom
 
-    apply plugin: 'findbugs'
-
-    tasks.withType(FindBugs) {
-        reports {
-            html.enabled = true
-            xml.enabled = false
-        }
-    }
-
     repositories {
         mavenCentral()
     }
