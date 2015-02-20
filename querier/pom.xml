@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <groupId>kapok-dir</groupId>
   <artifactId>querier</artifactId>
-  <version>1.0-10-g340f800+</version>
+    <version>1.0-13-g81434a7+</version>
   <dependencies>
     <dependency>
       <groupId>org.apache.curator</groupId>
@@ -25,12 +26,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>kapok-dir</groupId>
-      <artifactId>common</artifactId>
-      <version>1.0-10-g340f800+</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>9.2.+</version>
@@ -43,16 +38,22 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>1.10.+</version>
+        <scope>test</scope>
+    </dependency>
+      <dependency>
       <groupId>kapok-dir</groupId>
       <artifactId>protos</artifactId>
-      <version>1.0-10-g340f800+</version>
+          <version>1.0-13-g81434a7+</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>1.10.+</version>
-      <scope>test</scope>
+        <groupId>kapok-dir</groupId>
+        <artifactId>common</artifactId>
+        <version>1.0-13-g81434a7+</version>
+        <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.google.protobuf</groupId>

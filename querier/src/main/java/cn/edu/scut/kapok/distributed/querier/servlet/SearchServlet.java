@@ -23,6 +23,11 @@ import java.io.OutputStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * SearchServlet handles search request.
+ * It parses input message, calls {@code searcher.search()},
+ * and finally generate output messge from search result.
+ */
 @Singleton
 public class SearchServlet extends HttpServlet {
 
@@ -30,6 +35,11 @@ public class SearchServlet extends HttpServlet {
 
     private final Searcher searcher;
 
+    /**
+     * Create SearchServlet instance.
+     *
+     * @param searcher Searcher is used to process search request.
+     */
     @Inject
     public SearchServlet(Searcher searcher) {
         this.searcher = searcher;
@@ -39,14 +49,16 @@ public class SearchServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         final AsyncContext asyncContext = req.getAsyncContext();
 
+        // Parse request.
         SearchRequest searchReq;
         try (InputStream in = req.getInputStream()) {
             searchReq = SearchRequest.parseFrom(in);
         } catch (IOException e) {
-            logger.error("parse SearchRequest", e);
+            logger.debug("parse SearchRequest", e);
             throw e;
         }
 
+        // Process search request.
         ListenableFuture<SearchResponse> future;
         try {
             future = searcher.search(searchReq);
@@ -55,14 +67,15 @@ public class SearchServlet extends HttpServlet {
             throw new ServletException(e);
         }
         checkNotNull(future);
+
+        // Add callback to be called with result.
         Futures.addCallback(future, new FutureCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse result) {
                 try (OutputStream out = resp.getOutputStream()) {
                     result.writeTo(out);
                 } catch (IOException e) {
-                    logger.error("serialize and write SearchResponse", e);
-                    // ignored intended.
+                    logger.debug("serialize and write SearchResponse", e);
                 } finally {
                     asyncContext.complete();
                 }

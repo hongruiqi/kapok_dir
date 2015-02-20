@@ -23,6 +23,9 @@ import java.io.OutputStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * SearchServlet deals with search request.
+ */
 @Singleton
 public class SearchServlet extends HttpServlet {
 
@@ -30,6 +33,11 @@ public class SearchServlet extends HttpServlet {
 
     private final Retriever retriever;
 
+    /**
+     * Create SearchServlet instance.
+     *
+     * @param retriever Retriever is used to retrieve results with provided query.
+     */
     @Inject
     public SearchServlet(Retriever retriever) {
         this.retriever = retriever;
@@ -37,16 +45,20 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        // Use async.
         final AsyncContext asyncContext = req.startAsync();
 
+        // Parse input.
         QueryRequest queryRequest;
         try (InputStream in = req.getInputStream()) {
             queryRequest = QueryRequest.parseFrom(in);
         } catch (IOException e) {
+            logger.debug("parse request error.", e);
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
+        // Retrieve.
         ListenableFuture<QueryResponse> future;
         try {
             future = retriever.retrieve(queryRequest);
@@ -55,6 +67,7 @@ public class SearchServlet extends HttpServlet {
         }
         checkNotNull(future);
 
+        // Add callback to be called with result and generate response.
         addCallback(future, new FutureCallback<QueryResponse>() {
             @Override
             public void onSuccess(QueryResponse result) {

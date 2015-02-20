@@ -16,6 +16,11 @@ import java.net.UnknownHostException;
 import static cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * QuerierRegistry maintains registry of the querier.
+ * The registry creates and maintains a node in ZooKeeper.
+ * Information about querier is stored in the node.
+ */
 @Singleton
 public class QuerierRegistry {
 
@@ -25,6 +30,12 @@ public class QuerierRegistry {
     private final String querierAddr; // listening address of querier server.
     private PersistentEphemeralNode node; // zk node for registry.
 
+    /**
+     * Create {@code QuerierRegistry} instance.
+     *
+     * @param querierAddr Address of the querier.
+     * @param cf          Handle used to communicate with ZooKeeper.
+     */
     @Inject
     public QuerierRegistry(
             @Named("querier.addr") String querierAddr,
@@ -33,7 +44,7 @@ public class QuerierRegistry {
         this.querierAddr = checkNotNull(querierAddr);
     }
 
-    // Return the hostname of the machine.
+    // Return the hostname of machine.
     private String resolveHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -42,9 +53,9 @@ public class QuerierRegistry {
         }
     }
 
-    // Start the registry service.
-    // The service creates a node in zk for the querier, and maintains its state.
-    // The node stores the information about the querier.
+    /**
+     * Start the registry.
+     */
     public void start() {
         QuerierInfo info = createQuerierInfo();
 
@@ -57,8 +68,9 @@ public class QuerierRegistry {
         // Build protobuf message.
         QuerierInfo.Builder builder = QuerierInfo.newBuilder();
         builder.setAddr(querierAddr);
+
+        // Set the hostname if not null.
         String hostname = resolveHostname();
-        // Optional set the hostname if exsits.
         if (hostname != null) {
             builder.setHostname(hostname);
         }
@@ -74,8 +86,11 @@ public class QuerierRegistry {
         return node;
     }
 
-    // Close the node in zk.
-    // The node is deleted after being closed.
+    /**
+     * Close the registry. The node in ZooKeeper is also deleted.
+     *
+     * @throws IOException Exception occured when close.
+     */
     public void close() throws IOException {
         node.close();
     }
