@@ -32,15 +32,28 @@ import java.util.List;
 public class BBTRetriever implements Retriever {
 
     private static final String BBTSearchURL = "http://www.100steps.net/index.php?searchword=%s&searchphrase=all&limit=%d&option=com_search&limitstart=%d";
+    private static final String BBTBaseURL = "http://www.100steps.net/index.php";
+
     private final HttpAsyncClient httpClient;
 
+    /**
+     * Create a new BBTRetriever.
+     *
+     * @param httpClient Client used to communicate with bbt server.
+     */
     @Inject
     public BBTRetriever(HttpAsyncClient httpClient) {
         this.httpClient = httpClient;
     }
 
+    /**
+     * Extract all words from {@code query}. Queries with {@code not} set are ignored.
+     *
+     * @param query Query to be extracted.
+     * @return List of extracted words.
+     */
     List<String> extractWords(Query query) {
-        // Skip not condition.
+        // Ignore not queries.
         if (query.hasNot() && query.getNot()) {
             return Collections.emptyList();
         }
@@ -50,18 +63,26 @@ public class BBTRetriever implements Retriever {
             case BOOLEAN_QUERY:
                 List<String> words = new ArrayList<>();
                 for (Query q : query.getBooleanQuery().getQueriesList()) {
+                    // ExtractWords from subQuery.
                     words.addAll(extractWords(q));
                 }
                 return words;
             default:
+                // Unknown query type, just return emtpy list.
                 return Collections.emptyList();
         }
     }
 
+    /**
+     * Extract results from {@code in}.
+     *
+     * @param in InputStream to be extracted from.
+     * @return Results that is extracted.
+     * @throws IOException
+     */
     BBTResultList extractResult(InputStream in) throws IOException {
         BBTResultList results = new BBTResultList();
-        Document doc;
-        doc = Jsoup.parse(in, null, "http://www.100steps.net/index.php");
+        Document doc = Jsoup.parse(in, null, BBTBaseURL);
         String introT = doc.select("div.searchintro p strong").text();
         int total = Integer.parseInt(introT.replaceAll("[^0-9]+", ""));
         results.setTotal(total);
@@ -79,6 +100,15 @@ public class BBTRetriever implements Retriever {
         return results;
     }
 
+    /**
+     * Return composed url from params.
+     * {@code query} is urlencoded.
+     *
+     * @param from Start offset of the result to be fetched.
+     * @param count Number of the results to be fetched.
+     * @param query Query string.
+     * @return
+     */
     String makeSearchUrl(int from, int count, String query) {
         try {
             return String.format(BBTSearchURL,
@@ -88,16 +118,25 @@ public class BBTRetriever implements Retriever {
         }
     }
 
+    /**
+     * Retrive QueryResponse use {@code queryRequest}.
+     *
+     * @param queryRequest QueryRequest to be retrieved.
+     * @return ListenableFuture is done when response is retrieved or error occured.
+     * @throws RetrieveException Exception happens before request executed.
+     */
     @Override
     public ListenableFuture<QueryResponse> retrieve(QueryRequest queryRequest) throws RetrieveException {
         final SettableFuture<QueryResponse> future = SettableFuture.create();
+
+        // Generate query.
         List<String> words = extractWords(queryRequest.getQuery());
         String query = Joiner.on(" ").join(words);
 
         int from = queryRequest.getFrom();
         int count = queryRequest.getCount();
-
         String url = makeSearchUrl(from, count, query);
+
         HttpGet request = new HttpGet(url);
         httpClient.execute(request, new FutureCallback<HttpResponse>() {
             @Override
@@ -111,16 +150,19 @@ public class BBTRetriever implements Retriever {
                     QueryResponse resp = bbtResultsToQueryResponse(results);
                     future.set(resp);
                 } catch (Throwable t) {
-                    if (t instanceof UnexpectedStatusCodeException) {
+                    if (t instanceof RetrieveException) {
+                        // t is already a RetriveException.
                         future.setException(t);
                         return;
                     }
+                    // Wrap t in a RetriveException.
                     future.setException(new RetrieveException(t));
                 }
             }
 
             @Override
             public void failed(Exception ex) {
+                // Wrap ex in a RetrieveFailedException.
                 future.setException(new RetrieveFailedException(ex));
             }
 
@@ -133,6 +175,12 @@ public class BBTRetriever implements Retriever {
         return future;
     }
 
+    /**
+     * Transform BBTResultList to QueryResponse.
+     *
+     * @param results
+     * @return
+     */
     QueryResponse bbtResultsToQueryResponse(BBTResultList results) {
         QueryResponse.Builder builder = QueryResponse.newBuilder();
         builder.setTotal(results.getTotal());
@@ -146,7 +194,7 @@ public class BBTRetriever implements Retriever {
         return builder.build();
     }
 
-    public static class BBTResult {
+    private static class BBTResult {
         public String url = "";
         public String title = "";
         public String desc = "";
@@ -160,7 +208,7 @@ public class BBTRetriever implements Retriever {
         }
     }
 
-    public static class BBTResultList {
+    private static class BBTResultList {
         private List<BBTResult> results = new ArrayList<>();
         private int total = 0;
 
