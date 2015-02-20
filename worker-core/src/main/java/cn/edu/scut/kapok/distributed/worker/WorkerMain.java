@@ -15,7 +15,11 @@ public class WorkerMain {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkerMain.class);
 
-    // Start worker server.
+    /**
+     * Start the worker server.
+     *
+     * @param injector Injector is used to inject and get a workerServer instance.
+     */
     private static void startWorkerServer(Injector injector) {
         HttpServer workerServer = injector.getInstance(HttpServer.class);
         try {
@@ -29,14 +33,28 @@ public class WorkerMain {
         }
     }
 
+    /**
+     * Main entry of the worker.
+     * <ul>
+     * <li>1. Load worker module.</li>
+     * <li>2. Create Injector with worker module.</li>
+     * <li>3. Start worker module.</li>
+     * <li>4. Start worker server.</li>
+     * </ul>
+     *
+     * @param args Args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
+        // Load worker module.
         final ModuleService workerModule = ModuleServiceUtil.load("WorkerModule");
 
-        // create injector.
+        // Create injector.
         final Injector injector = Guice.createInjector(
                 Stage.PRODUCTION,
                 workerModule);
 
+        // Start worker module.
         try {
             workerModule.start(injector);
         } catch (Throwable t) {
@@ -45,6 +63,7 @@ public class WorkerMain {
             return;
         }
 
+        // Register shutdown hooks.
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -52,7 +71,7 @@ public class WorkerMain {
             }
         });
 
-        // start server.
+        // Start worker server.
         startWorkerServer(injector);
     }
 }
