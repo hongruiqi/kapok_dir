@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.common.node.impl.zk;
 
-import cn.edu.scut.kapok.distributed.common.ProtoParser;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Parser;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
@@ -13,23 +13,42 @@ import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class NodeManager<E> {
+/**
+ * NodeMonitor monitors component nodes in ZooKeeper.
+ *
+ * @param <E> ProtoBuffer class of the node's data.
+ */
+class NodeMonitor<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(NodeManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(NodeMonitor.class);
 
     private final String path;
-    private final ProtoParser<E> protoParser;
+    private final Parser<E> protoParser;
     private final CuratorFramework cf;
     private final NodeEventListener<E> listener;
     private PathChildrenCache cache;
 
-    public NodeManager(String path, ProtoParser<E> protoParser, NodeEventListener<E> listener, CuratorFramework cf) {
+    /**
+     * Craete a NodeMonitor.
+     *
+     * @param path        The path that NodeMonitor monitors.
+     * @param protoParser Parser used to parse node data.
+     * @param listener    Callbacks called when node is changed.
+     * @param cf          Handle used to communicate with ZooKeeper.
+     */
+    public NodeMonitor(String path, Parser<E> protoParser, NodeEventListener<E> listener, CuratorFramework cf) {
         this.path = checkNotNull(path);
         this.protoParser = checkNotNull(protoParser);
         this.listener = checkNotNull(listener);
         this.cf = checkNotNull(cf);
     }
 
+    /**
+     * Create the monitor at {@code path}, set change listeners,
+     * and start the monitor.
+     *
+     * @throws Exception Exception may occurred when start.
+     */
     public void start() throws Exception {
         cache = createPathChildrenCache(cf, path, true);
         setChangeListener();
@@ -37,9 +56,14 @@ class NodeManager<E> {
     }
 
     PathChildrenCache createPathChildrenCache(CuratorFramework cf, String path, boolean cacheData) {
-        return new PathChildrenCache(cf, path, true);
+        return new PathChildrenCache(cf, path, cacheData);
     }
 
+    /**
+     * Close the monitor.
+     *
+     * @throws IOException IOException may be thrown when close.
+     */
     public void close() throws IOException {
         cache.close();
     }

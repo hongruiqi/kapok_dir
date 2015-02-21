@@ -1,17 +1,15 @@
 package cn.edu.scut.kapok.distributed.querier.search.impl.fetch;
 
 import cn.edu.scut.kapok.distributed.common.httpclient.ProtoBufferHttpClient;
-import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
-import cn.edu.scut.kapok.distributed.querier.api.search.fetch.FetchException;
+import cn.edu.scut.kapok.distributed.protos.QueryRequest;
+import cn.edu.scut.kapok.distributed.protos.QueryResponse;
+import cn.edu.scut.kapok.distributed.protos.WorkerInfo;
 import cn.edu.scut.kapok.distributed.querier.api.search.fetch.Fetcher;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.http.nio.client.HttpAsyncClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import static cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
-import static cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
 
 @Singleton
 public class SimpleFetcher implements Fetcher {
@@ -24,7 +22,7 @@ public class SimpleFetcher implements Fetcher {
     }
 
     @Override
-    public ListenableFuture<QueryResponse> fetch(final WorkerInfo workerInfo, QueryRequest queryRequest) throws FetchException {
+    public ListenableFuture<QueryResponse> fetch(final WorkerInfo workerInfo, QueryRequest queryRequest) {
         return client.execute(workerInfo.getAddr(), queryRequest, QueryResponse.PARSER);
     }
 }

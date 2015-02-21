@@ -1,6 +1,7 @@
 package cn.edu.scut.kapok.distributed.common.node.impl.zk
-import cn.edu.scut.kapok.distributed.common.ProtoParser
+
 import com.google.protobuf.InvalidProtocolBufferException
+import com.google.protobuf.Parser
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.listen.ListenerContainer
 import org.apache.curator.framework.recipes.cache.ChildData
@@ -14,29 +15,29 @@ import org.mockito.ArgumentCaptor
 import static org.mockito.Matchers.any
 import static org.mockito.Mockito.*
 
-class NodeManagerTest {
+class NodeMonitorTest {
 
     CuratorFramework cf
-    ProtoParser parser
+    Parser parser
     NodeEventListener listener
     PathChildrenCache cache
     String path
     ListenerContainer container
     PathChildrenCacheEvent event
-    NodeManager manager
+    NodeMonitor manager
     ChildData childData
     Object dummy = new Object()
 
     @Before
     void setUp() {
         cf = mock(CuratorFramework.class)
-        parser = mock(ProtoParser.class)
+        parser = mock(Parser.class)
         listener = mock(NodeEventListener.class)
         cache = mock(PathChildrenCache.class)
         path = "/test"
         container = mock(ListenerContainer.class)
         event = mock(PathChildrenCacheEvent.class)
-        manager = spy(new NodeManager(path, parser, listener, cf))
+        manager = spy(new NodeMonitor(path, parser, listener, cf))
         childData = mock(ChildData.class)
     }
 
@@ -56,12 +57,12 @@ class NodeManagerTest {
         verify(cache).close()
     }
 
-    private void doChildChangeTest(boolean parseError=false, Closure c) {
+    private void doChildChangeTest(boolean parseError = false, Closure c) {
         startManager()
         if (!parseError) {
-            when(parser.parseFrom(any(byte[].class))).thenReturn(dummy)
+            when(parser.parseFrom((byte[]) any(byte[].class))).thenReturn(dummy)
         } else {
-            when(parser.parseFrom(any(byte[].class))).thenThrow(InvalidProtocolBufferException.class)
+            when(parser.parseFrom((byte[]) any(byte[].class))).thenThrow(InvalidProtocolBufferException.class)
         }
         def captor = ArgumentCaptor.forClass(PathChildrenCacheListener.class)
         verify(container).addListener(captor.capture())
@@ -74,7 +75,7 @@ class NodeManagerTest {
 
     @Test
     void testNodeManagerAddChild() {
-        doChildChangeTest { cacheListener, data ->
+        doChildChangeTest { cacheListener, byte[] data ->
             when(event.getType()).thenReturn(PathChildrenCacheEvent.Type.CHILD_ADDED)
             cacheListener.childEvent(cf, event)
             verify(parser).parseFrom(data)
@@ -85,7 +86,7 @@ class NodeManagerTest {
 
     @Test
     void testNodeManagerUpdateChild() {
-        doChildChangeTest { cacheListener, data ->
+        doChildChangeTest { cacheListener, byte[] data ->
             when(event.getType()).thenReturn(PathChildrenCacheEvent.Type.CHILD_UPDATED)
             cacheListener.childEvent(cf, event)
             verify(parser).parseFrom(data)
@@ -96,7 +97,7 @@ class NodeManagerTest {
 
     @Test
     void testNodeManagerRemoveChild() {
-        doChildChangeTest { cacheListener, data ->
+        doChildChangeTest { cacheListener, byte[] data ->
             when(event.getType()).thenReturn(PathChildrenCacheEvent.Type.CHILD_REMOVED)
             cacheListener.childEvent(cf, event)
             verify(parser).parseFrom(data)
@@ -107,7 +108,7 @@ class NodeManagerTest {
 
     @Test
     void testDataParseError() {
-        doChildChangeTest(true) { cacheListener, data ->
+        doChildChangeTest(true) { cacheListener, byte[] data ->
             when(event.getType()).thenReturn(PathChildrenCacheEvent.Type.CHILD_ADDED)
             cacheListener.childEvent(cf, event)
             verify(parser).parseFrom(data)

@@ -1,6 +1,7 @@
 package cn.edu.scut.kapok.distributed.querier;
 
 import cn.edu.scut.kapok.distributed.common.ZKPath;
+import cn.edu.scut.kapok.distributed.protos.QuerierInfo;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode;
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**

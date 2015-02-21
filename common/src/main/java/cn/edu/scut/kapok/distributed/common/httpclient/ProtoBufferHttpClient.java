@@ -13,14 +13,31 @@ import org.apache.http.nio.client.HttpAsyncClient;
 
 import java.io.IOException;
 
+/**
+ * ProtoBufferHttpClient wraps HttpAsyncClient and processes protobuffer
+ * request's encoding and response's decoding.
+ */
 public class ProtoBufferHttpClient {
 
     private final HttpAsyncClient httpClient;
 
+    /**
+     * Create ProtoBufferHttpClient instance.
+     *
+     * @param httpClient httpClient to be wrapped.
+     */
     public ProtoBufferHttpClient(HttpAsyncClient httpClient) {
         this.httpClient = httpClient;
     }
 
+    /**
+     * Process protobuffer messge's request and response.
+     *
+     * @param uri            Uri to be requested.
+     * @param request        Protobuffer request.
+     * @param responseParser Protobuffer response parser.
+     * @return Future of the response.
+     */
     public <T1 extends MessageLite, T2> ListenableFuture<T2> execute(String uri, T1 request, final Parser<T2> responseParser) {
         final SettableFuture<T2> future = SettableFuture.create();
         HttpPost post = new HttpPost(uri);

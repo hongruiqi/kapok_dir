@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.querier.api.search;
 
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
-import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
+import cn.edu.scut.kapok.distributed.protos.QueryResponse;
+import cn.edu.scut.kapok.distributed.protos.WorkerInfo;
 import com.google.common.base.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;

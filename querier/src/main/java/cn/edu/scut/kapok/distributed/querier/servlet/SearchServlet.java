@@ -1,8 +1,7 @@
 package cn.edu.scut.kapok.distributed.querier.servlet;
 
-import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
-import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import cn.edu.scut.kapok.distributed.querier.api.search.SearchException;
+import cn.edu.scut.kapok.distributed.protos.SearchRequest;
+import cn.edu.scut.kapok.distributed.protos.SearchResponse;
 import cn.edu.scut.kapok.distributed.querier.api.search.Searcher;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -59,13 +58,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // Process search request.
-        ListenableFuture<SearchResponse> future;
-        try {
-            future = searcher.search(searchReq);
-        } catch (SearchException e) {
-            logger.error("search", e);
-            throw new ServletException(e);
-        }
+        ListenableFuture<SearchResponse> future = searcher.search(searchReq);
         checkNotNull(future);
 
         // Add callback to be called with result.

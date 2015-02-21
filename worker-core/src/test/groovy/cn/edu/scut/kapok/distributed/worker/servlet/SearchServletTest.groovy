@@ -1,5 +1,7 @@
 package cn.edu.scut.kapok.distributed.worker.servlet
 
+import cn.edu.scut.kapok.distributed.protos.QueryRequest
+import cn.edu.scut.kapok.distributed.protos.QueryResponse
 import cn.edu.scut.kapok.distributed.test.ByteArrayServletOutputStream
 import cn.edu.scut.kapok.distributed.test.DelegateServletInputStream
 import cn.edu.scut.kapok.distributed.worker.api.retriever.RetrieveException
@@ -15,8 +17,6 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import static cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest
-import static cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse
 import static org.mockito.Matchers.any
 import static org.mockito.Matchers.anyInt
 import static org.mockito.Mockito.*

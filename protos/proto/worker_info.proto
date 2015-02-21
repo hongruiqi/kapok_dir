@@ -2,6 +2,8 @@ package cn.edu.scut.kapok.distributed.protos;
 
 option java_outer_classname = "WorkerInfoProto";
 
+option java_multiple_files = true;
+
 message WorkerInfo {
     required string uuid = 1;
     required string name = 2;

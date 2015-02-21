@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.worker.servlet;
 
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
+import cn.edu.scut.kapok.distributed.protos.QueryRequest;
+import cn.edu.scut.kapok.distributed.protos.QueryResponse;
 import cn.edu.scut.kapok.distributed.worker.api.retriever.RetrieveException;
 import cn.edu.scut.kapok.distributed.worker.api.retriever.Retriever;
 import com.google.common.util.concurrent.FutureCallback;

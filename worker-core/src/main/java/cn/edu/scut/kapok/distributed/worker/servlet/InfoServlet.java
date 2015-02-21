@@ -1,6 +1,6 @@
 package cn.edu.scut.kapok.distributed.worker.servlet;
 
-import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
+import cn.edu.scut.kapok.distributed.protos.WorkerInfo;
 import cn.edu.scut.kapok.distributed.worker.WorkerPropertyNames;
 
 import javax.inject.Inject;

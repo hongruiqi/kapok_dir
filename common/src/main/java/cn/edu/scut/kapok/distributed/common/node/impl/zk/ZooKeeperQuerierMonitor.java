@@ -1,11 +1,9 @@
 package cn.edu.scut.kapok.distributed.common.node.impl.zk;
 
-import cn.edu.scut.kapok.distributed.common.ProtoParser;
 import cn.edu.scut.kapok.distributed.common.ZKPath;
-import cn.edu.scut.kapok.distributed.common.node.QuerierManager;
-import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
+import cn.edu.scut.kapok.distributed.common.node.QuerierMonitor;
+import cn.edu.scut.kapok.distributed.protos.QuerierInfo;
 import com.google.common.collect.ImmutableMap;
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,39 +13,58 @@ import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-// QuerierManager manages the status of the queriers.
-// start() should be called to make the manager working.
+/**
+ * ZooKeeperQuerierMonitor monitored the status of the querier node.
+ */
 @Singleton
-public class ZooKeeperQuerierManager implements QuerierManager {
+public class ZooKeeperQuerierMonitor implements QuerierMonitor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZooKeeperQuerierManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ZooKeeperQuerierMonitor.class);
 
-    private NodeManager<QuerierInfo> nodeManager;
+    private NodeMonitor<QuerierInfo> nodeMonitor;
     private ConcurrentHashMap<String, QuerierInfo> queriers = new ConcurrentHashMap<>();
 
+    /**
+     * Create a ZooKeeerQuerierMonitor.
+     *
+     * @param cf used to communicate with ZooKeeper.
+     */
     @Inject
-    public ZooKeeperQuerierManager(CuratorFramework cf) {
-        nodeManager = new NodeManager<>(ZKPath.QUERIERS, new ProtoParser<QuerierInfo>() {
-            @Override
-            public QuerierInfo parseFrom(byte[] msg) throws InvalidProtocolBufferException {
-                return QuerierInfo.parseFrom(msg);
-            }
-        }, this.new EventListener(), cf);
+    public ZooKeeperQuerierMonitor(CuratorFramework cf) {
+        nodeMonitor = new NodeMonitor<>(ZKPath.QUERIERS, QuerierInfo.PARSER, this.new EventListener(), cf);
     }
 
+    /**
+     * Start the monitor.
+     *
+     * @throws Exception errors.
+     */
     public void start() throws Exception {
-        nodeManager.start();
+        nodeMonitor.start();
     }
 
+    /**
+     * Close the monitor.
+     *
+     * @throws IOException errors.
+     */
     public void close() throws IOException {
-        nodeManager.close();
+        nodeMonitor.close();
     }
 
+    /**
+     * Returns current queriers.
+     * Results are copy from a local cache,
+     * so cost is little.
+     *
+     * @return current queriers.
+     */
     @Override
     public ImmutableMap<String, QuerierInfo> getQueriers() {
         return ImmutableMap.copyOf(queriers);
     }
 
+    // change map with events.
     private class EventListener implements NodeEventListener<QuerierInfo> {
         @Override
         public void onAdd(QuerierInfo nodeInfo) {

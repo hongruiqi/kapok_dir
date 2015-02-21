@@ -2,6 +2,7 @@ import cn.edu.scut.kapok.distributed.common.HttpServer
 import cn.edu.scut.kapok.distributed.common.ModuleService
 import cn.edu.scut.kapok.distributed.worker.WorkerRegistry
 import cn.edu.scut.kapok.distributed.worker.api.retriever.Retriever
+import cn.edu.scut.kapok.distributed.worker.retriever.impl.bbt.BBTRetriever
 import cn.edu.scut.kapok.distributed.worker.servlet.InfoServlet
 import cn.edu.scut.kapok.distributed.worker.servlet.SearchServlet
 import com.google.common.net.HostAndPort
@@ -18,7 +19,6 @@ import org.apache.http.impl.nio.client.HttpAsyncClients
 import org.apache.http.nio.client.HttpAsyncClient
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
-import cn.edu.scut.kapok.distributed.worker.retriever.impl.bbt.BBTRetriever
 
 import javax.inject.Inject
 import javax.inject.Named

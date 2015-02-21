@@ -1,12 +1,13 @@
 package cn.edu.scut.kapok.distributed.worker
+
 import cn.edu.scut.kapok.distributed.common.ZKPath
+import cn.edu.scut.kapok.distributed.protos.WorkerInfo
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 
-import static cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo
 import static org.mockito.Mockito.*
 
 class WorkerRegistryTest {

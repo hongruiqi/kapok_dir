@@ -1,7 +1,7 @@
 package cn.edu.scut.kapok.distributed.worker.api.retriever;
 
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
+import cn.edu.scut.kapok.distributed.protos.QueryRequest;
+import cn.edu.scut.kapok.distributed.protos.QueryResponse;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public interface Retriever {

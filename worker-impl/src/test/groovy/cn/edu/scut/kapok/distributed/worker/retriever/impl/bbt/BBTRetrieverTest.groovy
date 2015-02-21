@@ -1,5 +1,9 @@
 package cn.edu.scut.kapok.distributed.worker.retriever.impl.bbt
 
+import cn.edu.scut.kapok.distributed.protos.BooleanQuery
+import cn.edu.scut.kapok.distributed.protos.Query
+import cn.edu.scut.kapok.distributed.protos.QueryRequest
+import cn.edu.scut.kapok.distributed.protos.QueryResponse
 import cn.edu.scut.kapok.distributed.worker.api.retriever.RetrieveException
 import com.google.common.collect.Lists
 import com.google.common.io.ByteStreams
@@ -17,15 +21,10 @@ import java.util.concurrent.CancellationException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
-import static cn.edu.scut.kapok.distributed.protos.QueryProto.*
 import static BBTRetriever.BBTResult
 import static BBTRetriever.BBTResultList
 import static org.mockito.Matchers.any
 import static org.mockito.Mockito.*
-import static org.mockito.Mockito.doReturn
-import static org.mockito.Mockito.doThrow
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
 
 class BBTRetrieverTest {
 

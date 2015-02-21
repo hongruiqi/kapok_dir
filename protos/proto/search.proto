@@ -4,6 +4,8 @@ import "query.proto";
 
 option java_outer_classname = "SearchProto";
 
+option java_multiple_files = true;
+
 message SearchRequest {
     required Query query = 1;
     required uint32 page = 2;

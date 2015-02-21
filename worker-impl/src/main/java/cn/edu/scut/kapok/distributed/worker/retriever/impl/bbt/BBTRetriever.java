@@ -1,9 +1,9 @@
 package cn.edu.scut.kapok.distributed.worker.retriever.impl.bbt;
 
-import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryRequest;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResponse;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.QueryResult;
+import cn.edu.scut.kapok.distributed.protos.Query;
+import cn.edu.scut.kapok.distributed.protos.QueryRequest;
+import cn.edu.scut.kapok.distributed.protos.QueryResponse;
+import cn.edu.scut.kapok.distributed.protos.QueryResult;
 import cn.edu.scut.kapok.distributed.worker.api.retriever.RetrieveException;
 import cn.edu.scut.kapok.distributed.worker.api.retriever.Retriever;
 import com.google.common.base.Joiner;
@@ -104,7 +104,7 @@ public class BBTRetriever implements Retriever {
      * Return composed url from params.
      * {@code query} is urlencoded.
      *
-     * @param from Start offset of the result to be fetched.
+     * @param from  Start offset of the result to be fetched.
      * @param count Number of the results to be fetched.
      * @param query Query string.
      * @return

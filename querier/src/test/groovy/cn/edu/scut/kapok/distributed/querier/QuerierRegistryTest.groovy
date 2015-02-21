@@ -1,12 +1,13 @@
 package cn.edu.scut.kapok.distributed.querier
 
+import cn.edu.scut.kapok.distributed.protos.QuerierInfo
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 
-import static cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo
+import static org.mockito.Matchers.any
 import static org.mockito.Mockito.*
 
 class QuerierRegistryTest {

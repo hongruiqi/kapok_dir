@@ -1,7 +1,7 @@
 import cn.edu.scut.kapok.distributed.common.HttpServer
 import cn.edu.scut.kapok.distributed.common.ModuleService
-import cn.edu.scut.kapok.distributed.common.node.WorkerManager
-import cn.edu.scut.kapok.distributed.common.node.impl.zk.ZooKeeperWorkerManager
+import cn.edu.scut.kapok.distributed.common.node.WorkerMonitor
+import cn.edu.scut.kapok.distributed.common.node.impl.zk.ZooKeeperWorkerMonitor
 import cn.edu.scut.kapok.distributed.querier.QuerierRegistry
 import cn.edu.scut.kapok.distributed.querier.api.search.Searcher
 import cn.edu.scut.kapok.distributed.querier.api.search.fetch.Fetcher
@@ -127,7 +127,7 @@ class QuerierModule extends ServletModule implements ModuleService {
     }
 
     private void bindComponents() {
-        bind(WorkerManager.class).to(ZooKeeperWorkerManager.class).in(Singleton.class)
+        bind(WorkerMonitor.class).to(ZooKeeperWorkerMonitor.class).in(Singleton.class)
         bind(Selector.class).to(SimpleSelector.class).in(Singleton.class)
         bind(Merger.class).to(SimpleMerger.class).in(Singleton.class)
         bind(Fetcher.class).to(SimpleFetcher.class).in(Singleton.class);
@@ -142,7 +142,7 @@ class QuerierModule extends ServletModule implements ModuleService {
     public void start(Injector injector) {
         injector.getInstance(CuratorFramework.class).start()
         injector.getInstance(QuerierRegistry.class).start()
-        injector.getInstance(ZooKeeperWorkerManager.class).start();
+        injector.getInstance(ZooKeeperWorkerMonitor.class).start();
         ((CloseableHttpAsyncClient) injector.getInstance(HttpAsyncClient.class)).start()
     }
 
@@ -158,7 +158,7 @@ class QuerierModule extends ServletModule implements ModuleService {
             ((CloseableHttpAsyncClient) injector.getInstance(HttpAsyncClient.class)).close()
         }
         ignoreException {
-            injector.getInstance(ZooKeeperWorkerManager.class).close();
+            injector.getInstance(ZooKeeperWorkerMonitor.class).close();
         }
         ignoreException {
             injector.getInstance(QuerierRegistry.class).close()

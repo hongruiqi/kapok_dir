@@ -1,11 +1,9 @@
 package cn.edu.scut.kapok.distributed.common.node.impl.zk;
 
-import cn.edu.scut.kapok.distributed.common.ProtoParser;
 import cn.edu.scut.kapok.distributed.common.ZKPath;
-import cn.edu.scut.kapok.distributed.common.node.WorkerManager;
-import cn.edu.scut.kapok.distributed.protos.WorkerInfoProto.WorkerInfo;
+import cn.edu.scut.kapok.distributed.common.node.WorkerMonitor;
+import cn.edu.scut.kapok.distributed.protos.WorkerInfo;
 import com.google.common.collect.ImmutableMap;
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,38 +13,55 @@ import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-// WorkerManager manages the status of the workers.
-// start() should be called to make the manager working.
+/**
+ * ZooKeeperWorkerMonitor monitored the status of the workers.
+ */
 @Singleton
-public class ZooKeeperWorkerManager implements WorkerManager {
-    private static final Logger logger = LoggerFactory.getLogger(ZooKeeperWorkerManager.class);
+public class ZooKeeperWorkerMonitor implements WorkerMonitor {
+    private static final Logger logger = LoggerFactory.getLogger(ZooKeeperWorkerMonitor.class);
 
-    private final NodeManager<WorkerInfo> nodeManager;
+    private final NodeMonitor<WorkerInfo> nodeMonitor;
     private ConcurrentHashMap<String, WorkerInfo> workers = new ConcurrentHashMap<>();
 
+    /**
+     * Create a ZooKeeperWorkerMonitor.
+     *
+     * @param cf used to communicate with ZooKeeper.
+     */
     @Inject
-    public ZooKeeperWorkerManager(CuratorFramework cf) {
-        nodeManager = new NodeManager<>(ZKPath.WORKERS, new ProtoParser<WorkerInfo>() {
-            @Override
-            public WorkerInfo parseFrom(byte[] msg) throws InvalidProtocolBufferException {
-                return WorkerInfo.parseFrom(msg);
-            }
-        }, this.new EventListener(), cf);
+    public ZooKeeperWorkerMonitor(CuratorFramework cf) {
+        nodeMonitor = new NodeMonitor<>(ZKPath.WORKERS, WorkerInfo.PARSER, this.new EventListener(), cf);
     }
 
+    /**
+     * Start the monitor.
+     *
+     * @throws Exception errors.
+     */
     public void start() throws Exception {
-        nodeManager.start();
+        nodeMonitor.start();
     }
 
+    /**
+     * Close the monitor.
+     *
+     * @throws IOException errors
+     */
     public void close() throws IOException {
-        nodeManager.close();
+        nodeMonitor.close();
     }
 
+    /**
+     * Returns current workers.
+     *
+     * @return a local copy of the workers.
+     */
     @Override
     public ImmutableMap<String, WorkerInfo> getWorkers() {
         return ImmutableMap.copyOf(workers);
     }
 
+    // change workers mapping according to event.
     private class EventListener implements NodeEventListener<WorkerInfo> {
         @Override
         public void onAdd(WorkerInfo nodeInfo) {
