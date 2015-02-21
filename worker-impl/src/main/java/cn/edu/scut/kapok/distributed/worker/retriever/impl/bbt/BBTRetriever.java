@@ -107,7 +107,7 @@ public class BBTRetriever implements Retriever {
      * @param from  Start offset of the result to be fetched.
      * @param count Number of the results to be fetched.
      * @param query Query string.
-     * @return
+     * @return Composed url.
      */
     String makeSearchUrl(int from, int count, String query) {
         try {
@@ -123,10 +123,9 @@ public class BBTRetriever implements Retriever {
      *
      * @param queryRequest QueryRequest to be retrieved.
      * @return ListenableFuture is done when response is retrieved or error occured.
-     * @throws RetrieveException Exception happens before request executed.
      */
     @Override
-    public ListenableFuture<QueryResponse> retrieve(QueryRequest queryRequest) throws RetrieveException {
+    public ListenableFuture<QueryResponse> retrieve(QueryRequest queryRequest) {
         final SettableFuture<QueryResponse> future = SettableFuture.create();
 
         // Generate query.
@@ -149,13 +148,9 @@ public class BBTRetriever implements Retriever {
                     BBTResultList results = extractResult(result.getEntity().getContent());
                     QueryResponse resp = bbtResultsToQueryResponse(results);
                     future.set(resp);
+                } catch (RetrieveException e) {
+                    future.setException(e);
                 } catch (Throwable t) {
-                    if (t instanceof RetrieveException) {
-                        // t is already a RetriveException.
-                        future.setException(t);
-                        return;
-                    }
-                    // Wrap t in a RetriveException.
                     future.setException(new RetrieveException(t));
                 }
             }
@@ -178,8 +173,8 @@ public class BBTRetriever implements Retriever {
     /**
      * Transform BBTResultList to QueryResponse.
      *
-     * @param results
-     * @return
+     * @param results BBTResultList
+     * @return transformed QueryResponse
      */
     QueryResponse bbtResultsToQueryResponse(BBTResultList results) {
         QueryResponse.Builder builder = QueryResponse.newBuilder();
@@ -209,7 +204,7 @@ public class BBTRetriever implements Retriever {
     }
 
     private static class BBTResultList {
-        private List<BBTResult> results = new ArrayList<>();
+        private final List<BBTResult> results = new ArrayList<>();
         private int total = 0;
 
         public void addResult(BBTResult result) {

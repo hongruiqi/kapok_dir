@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.AsyncContext;
@@ -46,7 +47,7 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        final AsyncContext asyncContext = req.getAsyncContext();
+        final AsyncContext asyncContext = req.startAsync();
 
         // Parse request.
         SearchRequest searchReq;
@@ -75,7 +76,7 @@ public class SearchServlet extends HttpServlet {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(@Nonnull Throwable t) {
                 logger.error("search error", t);
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 asyncContext.complete();

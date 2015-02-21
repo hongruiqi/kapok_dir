@@ -1,5 +1,4 @@
 package cn.edu.scut.kapok.distributed.worker.servlet
-
 import cn.edu.scut.kapok.distributed.protos.QueryRequest
 import cn.edu.scut.kapok.distributed.protos.QueryResponse
 import cn.edu.scut.kapok.distributed.test.ByteArrayServletOutputStream
@@ -13,7 +12,6 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 
 import javax.servlet.AsyncContext
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -76,19 +74,6 @@ class SearchServletTest {
         servlet.doPost(request, response)
         verify(request).getInputStream()
         verify(response).sendError(400)
-    }
-
-    @Test(expected = RetrieveException.class)
-    void testRetrieveException() {
-        def inputStream = new DelegateServletInputStream(
-                new ByteArrayInputStream(queryRequest.toByteArray()))
-        when(request.getInputStream()).thenReturn(inputStream)
-        when(retriever.retrieve(any(QueryRequest.class))).thenThrow(new RetrieveException())
-        try {
-            servlet.doPost(request, response)
-        } catch (ServletException e) {
-            throw e.getCause();
-        }
     }
 
     @Test

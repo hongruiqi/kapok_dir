@@ -55,6 +55,7 @@ class QuerierModule extends ServletModule implements ModuleService {
         try {
             Properties properties = new Properties()
             properties.load(stream)
+            properties.putAll(System.getProperties())
             Names.bindProperties(binder(), properties)
         } catch (IOException e) {
             addError(e)
@@ -146,10 +147,10 @@ class QuerierModule extends ServletModule implements ModuleService {
         ((CloseableHttpAsyncClient) injector.getInstance(HttpAsyncClient.class)).start()
     }
 
-    private void ignoreException(Closure c) {
+    private static void ignoreException(Closure c) {
         try {
             c()
-        } catch (Throwable t) { /* ignored. */
+        } catch (Throwable ignored) { /* ignored. */
         }
     }
 

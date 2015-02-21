@@ -21,8 +21,8 @@ public class ZooKeeperQuerierMonitor implements QuerierMonitor {
 
     private static final Logger logger = LoggerFactory.getLogger(ZooKeeperQuerierMonitor.class);
 
-    private NodeMonitor<QuerierInfo> nodeMonitor;
-    private ConcurrentHashMap<String, QuerierInfo> queriers = new ConcurrentHashMap<>();
+    private final NodeMonitor<QuerierInfo> nodeMonitor;
+    private final ConcurrentHashMap<String, QuerierInfo> queriers = new ConcurrentHashMap<>();
 
     /**
      * Create a ZooKeeerQuerierMonitor.

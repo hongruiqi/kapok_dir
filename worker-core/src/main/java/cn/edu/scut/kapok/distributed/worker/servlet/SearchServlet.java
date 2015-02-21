@@ -2,7 +2,6 @@ package cn.edu.scut.kapok.distributed.worker.servlet;
 
 import cn.edu.scut.kapok.distributed.protos.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryResponse;
-import cn.edu.scut.kapok.distributed.worker.api.retriever.RetrieveException;
 import cn.edu.scut.kapok.distributed.worker.api.retriever.Retriever;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -59,15 +58,11 @@ public class SearchServlet extends HttpServlet {
         }
 
         // Retrieve.
-        ListenableFuture<QueryResponse> future;
-        try {
-            future = retriever.retrieve(queryRequest);
-        } catch (RetrieveException e) {
-            throw new ServletException(e);
-        }
+        ListenableFuture<QueryResponse> future = retriever.retrieve(queryRequest);
         checkNotNull(future);
 
         // Add callback to be called with result and generate response.
+        //noinspection NullableProblems
         addCallback(future, new FutureCallback<QueryResponse>() {
             @Override
             public void onSuccess(QueryResponse result) {

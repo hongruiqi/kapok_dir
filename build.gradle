@@ -24,9 +24,28 @@ allprojects {
 }
 
 subprojects {
-    version = 'git describe --dirty=+'.execute(null, projectDir).in.text.trim()
+    version = 'git describe --dirty=+'.execute((String[]) null, projectDir).in.text.trim()
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 
     jar.baseName = "${rootProject.name}-${project.name}"
+
+    sourceSets {
+        integTest {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+        }
+    }
+
+    configurations {
+        integTestCompile.extendsFrom testCompile
+        integTestRuntime.extendsFrom testRuntime
+    }
+
+    task integTest(type: Test) {
+        testClassesDir = sourceSets.integTest.output.classesDir
+        classpath = sourceSets.integTest.runtimeClasspath
+    }
+
+    check.dependsOn integTest
 }

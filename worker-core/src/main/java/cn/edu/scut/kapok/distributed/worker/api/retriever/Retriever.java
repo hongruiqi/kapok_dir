@@ -5,5 +5,5 @@ import cn.edu.scut.kapok.distributed.protos.QueryResponse;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public interface Retriever {
-    ListenableFuture<QueryResponse> retrieve(QueryRequest request) throws RetrieveException;
+    ListenableFuture<QueryResponse> retrieve(QueryRequest request);
 }

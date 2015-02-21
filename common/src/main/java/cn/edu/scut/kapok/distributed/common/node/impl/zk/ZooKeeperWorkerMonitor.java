@@ -21,7 +21,7 @@ public class ZooKeeperWorkerMonitor implements WorkerMonitor {
     private static final Logger logger = LoggerFactory.getLogger(ZooKeeperWorkerMonitor.class);
 
     private final NodeMonitor<WorkerInfo> nodeMonitor;
-    private ConcurrentHashMap<String, WorkerInfo> workers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, WorkerInfo> workers = new ConcurrentHashMap<>();
 
     /**
      * Create a ZooKeeperWorkerMonitor.

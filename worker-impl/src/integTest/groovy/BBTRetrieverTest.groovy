@@ -21,7 +21,7 @@ class BBTRetrieverTest {
     }
 
     @After
-    void shutdown() {
+    void tearDown() {
         httpClient.close()
     }
 
