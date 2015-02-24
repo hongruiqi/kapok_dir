@@ -112,6 +112,7 @@ class WorkerModule extends ServletModule implements ModuleService {
         bind(HttpAsyncClient.class).toProvider(new Provider<HttpAsyncClient>() {
             @Override
             HttpAsyncClient get() {
+                HttpAsyncClients.custom().setThreadFactory()
                 return HttpAsyncClients.createDefault()
             }
         }).in(Singleton.class)

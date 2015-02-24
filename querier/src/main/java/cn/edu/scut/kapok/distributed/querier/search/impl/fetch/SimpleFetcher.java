@@ -1,6 +1,6 @@
 package cn.edu.scut.kapok.distributed.querier.search.impl.fetch;
 
-import cn.edu.scut.kapok.distributed.common.httpclient.ProtoBufferHttpClient;
+import cn.edu.scut.kapok.distributed.common.http.ProtoBufferHttpClient;
 import cn.edu.scut.kapok.distributed.protos.QueryRequest;
 import cn.edu.scut.kapok.distributed.protos.QueryResponse;
 import cn.edu.scut.kapok.distributed.protos.WorkerInfo;

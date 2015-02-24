@@ -28,20 +28,24 @@ public class QuerierRegistry {
 
     private final CuratorFramework cf; // used to communicate with zk.
     private final String querierAddr; // listening address of querier server.
+    private final String querierPath; // http url path.
     private PersistentEphemeralNode node; // zk node for registry.
 
     /**
      * Create {@code QuerierRegistry} instance.
      *
      * @param querierAddr Address of the querier.
+     * @param querierPath Url path of the querier.
      * @param cf          Handle used to communicate with ZooKeeper.
      */
     @Inject
     public QuerierRegistry(
             @Named("querier.addr") String querierAddr,
+            @Named("querier.path") String querierPath,
             CuratorFramework cf) {
-        this.cf = checkNotNull(cf);
         this.querierAddr = checkNotNull(querierAddr);
+        this.querierPath = checkNotNull(querierPath);
+        this.cf = checkNotNull(cf);
     }
 
     // Return the hostname of machine.
@@ -67,7 +71,7 @@ public class QuerierRegistry {
     private QuerierInfo createQuerierInfo() {
         // Build protobuf message.
         QuerierInfo.Builder builder = QuerierInfo.newBuilder();
-        builder.setAddr(querierAddr);
+        builder.setAddr(String.format("http://%s%s", querierAddr, querierPath));
 
         // Set the hostname if not null.
         String hostname = resolveHostname();

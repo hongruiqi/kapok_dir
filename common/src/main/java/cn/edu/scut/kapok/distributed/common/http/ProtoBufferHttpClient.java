@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.common.httpclient;
+package cn.edu.scut.kapok.distributed.common.http;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
@@ -45,8 +45,9 @@ public class ProtoBufferHttpClient {
         httpClient.execute(post, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(HttpResponse result) {
-                if (result.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    future.setException(new Exception("status code error"));
+                int code = result.getStatusLine().getStatusCode();
+                if (code != HttpStatus.SC_OK) {
+                    future.setException(new Exception(String.format("status code error: %d", code)));
                     return;
                 }
                 try {
@@ -67,6 +68,7 @@ public class ProtoBufferHttpClient {
                 future.cancel(true);
             }
         });
+
         return future;
     }
 }

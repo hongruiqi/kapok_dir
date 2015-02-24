@@ -1,30 +1,20 @@
 package cn.edu.scut.kapok.distributed.api.search;
 
-import cn.edu.scut.kapok.distributed.api.search.exception.QuerierNotFoundException;
-import cn.edu.scut.kapok.distributed.api.search.exception.SearchException;
+import cn.edu.scut.kapok.distributed.api.search.querier.provider.QuerierNotFoundException;
 import cn.edu.scut.kapok.distributed.api.search.querier.provider.QuerierProvider;
-import cn.edu.scut.kapok.distributed.protos.QuerierInfoProto.QuerierInfo;
-import cn.edu.scut.kapok.distributed.protos.QueryProto.Query;
-import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchRequest;
-import cn.edu.scut.kapok.distributed.protos.SearchProto.SearchResponse;
-import com.google.common.net.HostAndPort;
+import cn.edu.scut.kapok.distributed.common.http.ProtoBufferHttpClient;
+import cn.edu.scut.kapok.distributed.protos.QuerierInfo;
+import cn.edu.scut.kapok.distributed.protos.Query;
+import cn.edu.scut.kapok.distributed.protos.SearchRequest;
+import cn.edu.scut.kapok.distributed.protos.SearchResponse;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import com.google.protobuf.CodedInputStream;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.util.BytesContentProvider;
-import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.util.URIUtil;
+import org.apache.http.nio.client.HttpAsyncClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -36,72 +26,41 @@ public class Searcher {
     private static final Logger logger = LoggerFactory.getLogger(Searcher.class);
 
     private QuerierProvider querierProvider;
-    private HttpClient httpClient;
+    private ProtoBufferHttpClient client;
 
     @Inject
-    public Searcher(HttpClient httpClient, QuerierProvider querierProvider) {
-        this.httpClient = checkNotNull(httpClient);
+    public Searcher(HttpAsyncClient httpClient, QuerierProvider querierProvider) {
         this.querierProvider = checkNotNull(querierProvider);
+        this.client = new ProtoBufferHttpClient(httpClient);
     }
 
-    public ListenableFuture<SearchResponse> search(Query query, int page, int perPage, List<String> resources)
-            throws QuerierNotFoundException {
+    public ListenableFuture<SearchResponse> search(Query query, int page, int perPage, List<String> resources) {
         checkArgument(page > 0, "page should be positive");
         checkArgument(perPage > 0, "perPage should be positive");
         checkNotNull(query, "query can't be null");
-        checkNotNull(resources, "resources can't be null");
 
-        // 构建查询ProtoBuf对象
-        SearchRequest search = SearchRequest.newBuilder()
-                .setPage(page).setPerPage(perPage).setQuery(query)
-                .addAllResources(resources).build();
-        byte[] searchBytes = search.toByteArray();
+        SearchRequest.Builder builder = SearchRequest.newBuilder()
+                .setPage(page).setPerPage(perPage).setQuery(query);
 
-        // 响应Future对象
-        final SettableFuture<SearchResponse> future = SettableFuture.create();
+        if (resources!=null) {
+            // 构建查询ProtoBuf对象
+            builder.addAllResources(resources);
+        }
+
+        SearchRequest search = builder.build();
 
         // 获取Querier服务器地址
-        QuerierInfo querierInfo = querierProvider.get();
+        QuerierInfo querierInfo;
+        try {
+            querierInfo = querierProvider.get();
+        } catch (QuerierNotFoundException e) {
+            SettableFuture<SearchResponse> future = SettableFuture.create();
+            future.setException(e);
+            return future;
+        }
+
         logger.debug("use querier server: {}", querierInfo);
 
-        HostAndPort addr = HostAndPort.fromString(querierInfo.getAddr()).withDefaultPort(80);
-        String uri = URIUtil.newURI("http", addr.getHostText(), addr.getPort(), "/search/", "");
-
-        // 建立HTTP请求
-        Request req = httpClient.POST(uri);
-        req.content(new BytesContentProvider(searchBytes));
-
-        // 响应回调
-        req.onResponseContent(new Response.ContentListener() {
-            @Override
-            public void onContent(Response response, ByteBuffer content) {
-                if (response.getStatus() != HttpStatus.OK_200) {
-                    // exception set in onComplete.
-                    return;
-                }
-                try {
-                    SearchResponse searchResponse = SearchResponse.parseFrom(
-                            CodedInputStream.newInstance(content));
-                    future.set(searchResponse);
-                } catch (IOException e) {
-                    logger.error("parse search response", e);
-                    future.setException(e);
-                }
-            }
-        }).send(new Response.CompleteListener() {
-            @Override
-            public void onComplete(Result result) {
-                if (!result.isSucceeded()) {
-                    future.setException(result.getFailure());
-                    return;
-                }
-                if (result.getResponse().getStatus() != HttpStatus.OK_200) {
-                    logger.error("querier response with code: {}", result.getResponse().getStatus());
-                    future.setException(new SearchException("querier response code error"));
-                }
-            }
-        });
-
-        return future;
+        return client.execute(querierInfo.getAddr(), search, SearchResponse.PARSER);
     }
 }

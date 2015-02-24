@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.common.httpclient
+package cn.edu.scut.kapok.distributed.common.http
 
 import com.google.common.io.ByteStreams
 import com.google.protobuf.MessageLite

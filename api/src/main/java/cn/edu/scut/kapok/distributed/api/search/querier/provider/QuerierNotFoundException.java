@@ -1,4 +1,6 @@
-package cn.edu.scut.kapok.distributed.api.search.exception;
+package cn.edu.scut.kapok.distributed.api.search.querier.provider;
+
+import cn.edu.scut.kapok.distributed.api.search.SearchException;
 
 public class QuerierNotFoundException extends SearchException {
     public QuerierNotFoundException() {

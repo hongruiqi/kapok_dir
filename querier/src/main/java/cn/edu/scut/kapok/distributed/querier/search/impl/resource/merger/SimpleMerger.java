@@ -16,14 +16,12 @@ public class SimpleMerger implements Merger {
         SearchResponse.Builder builder = SearchResponse.newBuilder();
         long totalHit = 0;
         for (WorkerAndQueryResponse r : results) {
-            if (r.getQueryResponse().isPresent()) {
-                QueryResponse resp = r.getQueryResponse().get();
-                long total = resp.getTotal();
-                builder.addResourceStatsBuilder()
-                        .setResource(r.getWorker().getUuid())
-                        .setHit(total);
-                totalHit += total;
-            }
+            QueryResponse resp = r.getQueryResponse();
+            long total = resp.getTotal();
+            builder.addResourceStatsBuilder()
+                    .setResource(r.getWorker().getUuid())
+                    .setHit(total);
+            totalHit += total;
         }
         builder.setTotalHit(totalHit);
         return builder.build();

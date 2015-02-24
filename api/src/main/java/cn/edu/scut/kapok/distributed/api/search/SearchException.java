@@ -1,4 +1,4 @@
-package cn.edu.scut.kapok.distributed.api.search.exception;
+package cn.edu.scut.kapok.distributed.api.search;
 
 public class SearchException extends Exception {
     public SearchException() {

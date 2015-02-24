@@ -15,6 +15,7 @@ import cn.edu.scut.kapok.distributed.querier.servlet.SearchServlet
 import com.google.common.net.HostAndPort
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.inject.Injector
+import com.google.inject.Key
 import com.google.inject.Provider
 import com.google.inject.name.Names
 import com.google.inject.servlet.GuiceFilter
@@ -33,6 +34,8 @@ import javax.inject.Named
 import javax.inject.Singleton
 import javax.servlet.DispatcherType
 import java.util.concurrent.Executor
+
+import static com.google.inject.name.Names.named
 
 class QuerierModule extends ServletModule implements ModuleService {
     @Override
@@ -137,7 +140,9 @@ class QuerierModule extends ServletModule implements ModuleService {
     }
 
     private void bindServlets() {
-        serve("/search").with(SearchServlet.class)
+        def path = "/search"
+        bind(Key.get(String.class, named("querier.path"))).toInstance(path)
+        serve(path).with(SearchServlet.class)
     }
 
     public void start(Injector injector) {

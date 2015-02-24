@@ -10,7 +10,6 @@ import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.MergeExc
 import cn.edu.scut.kapok.distributed.querier.api.search.resource.merger.Merger;
 import cn.edu.scut.kapok.distributed.querier.api.search.resource.selector.SelectException;
 import cn.edu.scut.kapok.distributed.querier.api.search.resource.selector.Selector;
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -110,7 +109,9 @@ public class KapokSearcher implements Searcher {
             public void onSuccess(List<QueryResponse> result) {
                 List<WorkerAndQueryResponse> results = new ArrayList<>();
                 for (int i = 0; i < result.size(); i++) {
-                    results.add(new WorkerAndQueryResponse(workers.get(i), Optional.of(result.get(i))));
+                    if (result.get(i)!=null) {
+                        results.add(new WorkerAndQueryResponse(workers.get(i), result.get(i)));
+                    }
                 }
                 // Merge.
                 try {
