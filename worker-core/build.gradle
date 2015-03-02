@@ -19,6 +19,6 @@ dependencies {
     compile project(':common')
     compile project(':protos')
     testCompile 'org.mockito:mockito-core:1.10.+'
-    testCompile project(path: ':test')
+    testCompile project(path: ':test-util')
 }
 
